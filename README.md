@@ -8,11 +8,13 @@ A JavaScript Sound Synthesizer
 
 ## Technologies, Libraries, APIs
 - Dom interactivity using vanilla JS.
+- User interface will be built using as much pure HTML and CSS as possible.
 - Audio generation with HTML5 web audio API.
 - Tone.js frame work for enhanced user interface.
 - Canvas for visualization.
 
 ## Wireframes
+
 
 ## Implementation Timeline
 - Day 1: Interactive audio generation.
