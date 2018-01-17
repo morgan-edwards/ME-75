@@ -14,7 +14,7 @@ A JavaScript Sound Synthesizer
 - Canvas for visualization.
 
 ## Wireframes
-
+![wireframes](https://github.com/morgan-edwards/ME-75/blob/master/ME-75.png)
 
 ## Implementation Timeline
 - Day 1: Interactive audio generation.
