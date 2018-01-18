@@ -72,6 +72,10 @@
 
 __webpack_require__(6);
 
+__webpack_require__(7);
+
+__webpack_require__(11);
+
 /***/ }),
 /* 1 */
 /***/ (function(module, exports, __webpack_require__) {
@@ -34289,6 +34293,47 @@ module.exports = function(module) {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+// import Tone from 'tone';
+// import Nexus from './NexusUI';
+//
+// const oscOne = new Tone.OmniOscillator();
+// const envelope = new Tone.AmplitudeEnvelope();
+// oscOne.connect(envelope);
+// envelope.toMaster();
+//
+// const button = new Nexus.Button('#button');
+//
+// const voiceOne = {
+//   freq: 440,
+// };
+//
+// function setFreq(voice, freq) {
+//   voice.frequency.value = voiceOne.freq
+// }
+//
+// function triggerSound(osc, env) {
+//   console.log('starting');
+//   osc.start();
+//   env.triggerAttack();
+// }
+//
+// button.on('click', (v) => {
+//   triggerSound(oscOne, envelope);
+// });
+//
+// const freqSlide = document.getElementById('frequency');
+// freqSlide.addEventListener('input', (e) => {
+//   voiceOne.freq = e.target.value;
+//   setFreq(oscOne, voiceOne.freq)
+//   console.log(voiceOne);
+// });
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
 
 
 var _tone = __webpack_require__(1);
@@ -34301,14 +34346,36 @@ var _NexusUI2 = _interopRequireDefault(_NexusUI);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var synth = new _tone2.default.Synth().toMaster();
-var button = new _NexusUI2.default.Button('#button');
+var synth = new _tone2.default.Synth();
+synth.toMaster();
 
-function playSound() {
-  synth.triggerAttackRelease("C4", "8n");
-}
+var pattern = new _tone2.default.Pattern(function (time, note) {
+  synth.triggerAttackRelease(note, 0.25);
+}, [440, 550, 660, 770]);
 
-button.on('click', playSound);
+var arpStart = document.getElementById('arp');
+arpStart.addEventListener('click', function (e) {
+  pattern.start(0);
+  _tone2.default.Transport.start();
+});
+
+/***/ }),
+/* 8 */,
+/* 9 */,
+/* 10 */,
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+console.log("LOADING API...");
+
+var url = 'http://web.mta.info/status/serviceStatus.txt';
+
+$.getJSON('http://anyorigin.com/go?url=http%3A//web.mta.info/status/serviceStatus.txt&callback=?', function (data) {
+	$('#output').html(data.contents);
+});
 
 /***/ })
 /******/ ]);
