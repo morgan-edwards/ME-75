@@ -1,5 +1,19 @@
+.all-voices {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+}
+
+.all-voices section {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
 .voice {
+  display: flex;
   height: 100px;
-  width: 100px;
-  background-color: blue;
+  width: 200px;
+  background-color: gray;
+  justify-content: space-around;
+  align-items: center;
 }

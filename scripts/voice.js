@@ -1,11 +1,13 @@
 import Tone from 'tone';
+import { addVoice } from './interface';
 
 class Voice {
-  constructor(name, range, timbre) {
+  constructor(range) {
     this.range = range;
-    this.timbre = timbre;
-    this.name = name;
+    addVoice(range);
   }
+
+  
 }
 
 export default Voice;

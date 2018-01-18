@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8">
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="./scripts/NexusUI.js"></script>
     <link rel="stylesheet" href="./styles/master.css" />
     <title>ME-75</title>
   </head>
@@ -12,20 +13,29 @@
       <h1>ME-75</h1>
     </header>
 
-    <nav class="main-controls">
-      <button id="add-voice">Add New Voice</button>
-      <section id="voices"></section>
-    </nav>
+    <main class="all-voices">
+      <section id="bass">
+        <button value="bass" id="add-bass">Add Bass</button>
+      </section>
+      <section id="baritone">
+        <button value="baritone" id="add-baritone">Add Baritone</button>
+      </section>
+      <section id="tenor">
+        <button value="tenor" id="add-tenor">Add Tenor</button>
+      </section>
+      <section id="alto">
+        <button value="alto" id="add-alto">Add Alto</button>
+      </section>
+      <section id="soprano">
+        <button value="soprano" id="add-soprano">Add Soprano</button>
+      </section>
+    </main>
 
     <button id="arp">Start</button>
-
-    <input type="range"
-            min=27
-            max=4200
-            id="frequency" />
 
     <footer>
       <script src="./scripts/bundle.js"></script>
     </footer>
+
   </body>
 </html>
