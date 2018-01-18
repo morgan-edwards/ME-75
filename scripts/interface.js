@@ -1,4 +1,7 @@
-const voiceCounts = {
+import Voice from './voice';
+import Tone from 'tone';
+
+export const voiceCounts = {
   bass: 0,
   baritone: 0,
   tenor: 0,
@@ -20,33 +23,9 @@ addVoiceButtons.push(addSopranoBtn);
 
 addVoiceButtons.forEach((btn) => {
   btn.addEventListener('click', (e) => {
-    addVoice(e.target.value);
+    new Voice(e.target.value, Tone.FMSynth);
   });
 });
 
-export const addVoice = (range) => {
-  const index = parseInt(voiceCounts[range]) + 1;
-  voiceCounts[range] = index;
-  const id = `${range}${voiceCounts[range]}`;
-
-  const newVoice = document.createElement('div');
-  newVoice.setAttribute("id", id);
-  newVoice.setAttribute("class", `voice`);
-
-  const playEl = document.createElement('div');
-  playEl.setAttribute("nexus-ui", "button");
-  playEl.setAttribute("id", `${id}-play`);
-  newVoice.appendChild(playEl);
-
-  const volumeEl = document.createElement('div');
-  volumeEl.setAttribute("nexus-ui", "dial");
-  volumeEl.setAttribute("id", `${id}-volume`);
-  newVoice.appendChild(volumeEl);
-
-  const section = document.getElementById(`${range}`);
-  section.appendChild(newVoice);
-  console.log(voiceCounts);
-
-  const volumeDial = new Nexus.Dial(`${id}-volume`);
-  const playButton = new Nexus.Button(`${id}-play`);
-};
+$('#start-transport').on('click', () => Tone.Transport.start());
+$('#stop-transport').on('click', () => Tone.Transport.stop());

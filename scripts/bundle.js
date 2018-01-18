@@ -23812,11 +23812,6 @@ var _voice2 = _interopRequireDefault(_voice);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var bass = new _voice2.default('bass');
-var soprano = new _voice2.default('soprano');
-
-console.log("Voice created");
-
 /***/ }),
 /* 2 */
 /***/ (function(module, exports, __webpack_require__) {
@@ -23861,7 +23856,19 @@ console.log("Voice created");
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-var voiceCounts = {
+exports.voiceCounts = undefined;
+
+var _voice = __webpack_require__(6);
+
+var _voice2 = _interopRequireDefault(_voice);
+
+var _tone = __webpack_require__(0);
+
+var _tone2 = _interopRequireDefault(_tone);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var voiceCounts = exports.voiceCounts = {
   bass: 0,
   baritone: 0,
   tenor: 0,
@@ -23883,36 +23890,16 @@ addVoiceButtons.push(addSopranoBtn);
 
 addVoiceButtons.forEach(function (btn) {
   btn.addEventListener('click', function (e) {
-    addVoice(e.target.value);
+    new _voice2.default(e.target.value, _tone2.default.FMSynth);
   });
 });
 
-var addVoice = exports.addVoice = function addVoice(range) {
-  var index = parseInt(voiceCounts[range]) + 1;
-  voiceCounts[range] = index;
-  var id = '' + range + voiceCounts[range];
-
-  var newVoice = document.createElement('div');
-  newVoice.setAttribute("id", id);
-  newVoice.setAttribute("class", 'voice');
-
-  var playEl = document.createElement('div');
-  playEl.setAttribute("nexus-ui", "button");
-  playEl.setAttribute("id", id + '-play');
-  newVoice.appendChild(playEl);
-
-  var volumeEl = document.createElement('div');
-  volumeEl.setAttribute("nexus-ui", "dial");
-  volumeEl.setAttribute("id", id + '-volume');
-  newVoice.appendChild(volumeEl);
-
-  var section = document.getElementById('' + range);
-  section.appendChild(newVoice);
-  console.log(voiceCounts);
-
-  var volumeDial = new Nexus.Dial(id + '-volume');
-  var playButton = new Nexus.Button(id + '-play');
-};
+$('#start-transport').on('click', function () {
+  return _tone2.default.Transport.start();
+});
+$('#stop-transport').on('click', function () {
+  return _tone2.default.Transport.stop();
+});
 
 /***/ }),
 /* 6 */
@@ -23925,6 +23912,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 var _tone = __webpack_require__(0);
 
 var _tone2 = _interopRequireDefault(_tone);
@@ -23935,12 +23924,59 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var Voice = function Voice(range) {
-  _classCallCheck(this, Voice);
+var Voice = function () {
+  function Voice(range, instrument) {
+    _classCallCheck(this, Voice);
 
-  this.range = range;
-  (0, _interface.addVoice)(range);
-};
+    this.state = { playing: false };
+    this.range = range;
+    this.instrument = new instrument();
+    this.index = parseInt(_interface.voiceCounts[range]) + 1;
+    this.volume = new _tone2.default.Volume();
+    _interface.voiceCounts[range] = this.index;
+    this.instrument.chain(this.volume, _tone2.default.Master);
+    this.id = '' + range + _interface.voiceCounts[range];
+    this.addVoice(this.range, this.id);
+  }
+
+  _createClass(Voice, [{
+    key: 'addVoice',
+    value: function addVoice(range, id) {
+      var voiceDiv = '\n      <div id=' + id + ' class=\'voice\'>\n        <button id=\'' + id + '-play\'>Play</button>\n        <input\n          value=\'-12\'\n          max=\'6\'\n          min=\'-60\'\n          step=\'0.01\'\n          type=\'range\'\n          id=\'' + id + '-volume\' />\n        <button id=\'' + id + '-delete\'>Delete</button>\n      </div>\n    ';
+      $('#' + range).append(voiceDiv);
+      $('#' + id + '-play').click(this.togglePlay.bind(this));
+      $('#' + id + '-volume').on('input', this.adjustVolume.bind(this));
+      $('#' + id + '-delete').click(function () {
+        return $('#' + id).remove();
+      });
+      this.togglePlay();
+    }
+  }, {
+    key: 'adjustVolume',
+    value: function adjustVolume(e) {
+      this.volume.volume.value = parseFloat(e.target.value);
+      console.log(this.volume);
+    }
+  }, {
+    key: 'togglePlay',
+    value: function togglePlay() {
+      this.state['playing'] = !this.state.playing;
+      if (this.state.playing) {
+        this.instrument.triggerAttack("F4");
+      } else {
+        this.instrument.triggerRelease();
+      }
+      console.log('pressed');
+    }
+  }, {
+    key: 'instrument',
+    value: function instrument() {
+      this.instrument;
+    }
+  }]);
+
+  return Voice;
+}();
 
 exports.default = Voice;
 
@@ -23949,23 +23985,19 @@ exports.default = Voice;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+// import Tone from 'tone';
+//
+// const synth = new Tone.AMSynth().toMaster();
+//
+// const part = new Tone.Part(function(time, value){
+// 	synth.triggerAttackRelease(value.note, "8n", time, value.velocity);
+//     }, [{"time" : 0, "note" : "C3", "velocity": 0.9},
+//     {"time" : "0:2", "note" : "C4", "velocity": 0.5}
+// ]);
+//
+// part.start(0);
+// Tone.Transport.start();
 
-
-var _tone = __webpack_require__(0);
-
-var _tone2 = _interopRequireDefault(_tone);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var synth = new _tone2.default.AMSynth().toMaster();
-
-var part = new _tone2.default.Part(function (time, value) {
-   console.log("STARTING");
-   synth.triggerAttackRelease(value.note, "8n", time, value.velocity);
-}, [{ "time": 0, "note": "C3", "velocity": 0.9 }, { "time": "0:2", "note": "C4", "velocity": 0.5 }]);
-
-part.start(0);
-_tone2.default.Transport.start();
 
 /***/ })
 /******/ ]);
