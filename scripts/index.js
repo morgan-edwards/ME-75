@@ -1,3 +1,7 @@
 import './master';
+import './clock';
 import './arpeggiator';
-import './transit_api';
+import './interface';
+import Voice from './voice';
+
+const test = new Voice();

@@ -1,5 +1,4 @@
 import Tone from 'tone';
-import Nexus from './NexusUI';
 
 const synth = new Tone.Synth();
 synth.toMaster();

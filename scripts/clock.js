@@ -1,5 +1,10 @@
 import Tone from 'tone';
 
+const synth = new Tone.Synth();
+synth.toMaster()
+
+const testCallback = () => (synth.triggerAttackRelease("C2", "8n"));
+
 const transportSetting = {
   bpm: 120,
   swing: 0,
@@ -10,4 +15,5 @@ const transportSetting = {
   PPQ: 192
 };
 
-export const transport = new Tone.transport();
+Tone.Transport.scheduleRepeat(testCallback, "4n", 0, "1m");
+Tone.Transport.start();
