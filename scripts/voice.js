@@ -7,17 +7,16 @@ class Voice {
     this.range = range;
     this.instrument = new instrument();
     this.index = parseInt(voiceCounts[range]) + 1;
-    this.volume = new Tone.Volume();
     voiceCounts[range] = this.index;
-    this.instrument.chain(this.volume, Tone.Master);
+    this.instrument.toMaster();
     this.id = `${range}${voiceCounts[range]}`;
     this.addVoice(this.range, this.id);
+    this.part = this.setPart();
   }
 
   addVoice(range, id) {
     const voiceDiv = (`
       <div id=${id} class='voice'>
-        <button id='${id}-play'>Play</button>
         <input
           value='-12'
           max='6'
@@ -29,25 +28,24 @@ class Voice {
       </div>
     `);
     $(`#${range}`).append(voiceDiv);
-    $(`#${id}-play`).click(this.togglePlay.bind(this));
     $(`#${id}-volume`).on('input', this.adjustVolume.bind(this));
-    $(`#${id}-delete`).click(() => $(`#${id}`).remove())
-    this.togglePlay();
+    $(`#${id}-delete`).click(() => {
+      $(`#${id}`).remove();
+      this.instrument.disconnect();
+      this.instrument.dispose();
+    });
   }
 
   adjustVolume(e) {
-    this.volume.volume.value = parseFloat(e.target.value);
+    this.instrument.volume.value = parseFloat(e.target.value);
     console.log(this.volume);
   }
 
-  togglePlay() {
-    this.state['playing'] = !this.state.playing;
-    if (this.state.playing) {
-      this.instrument.triggerAttack("F4");
-    } else {
-      this.instrument.triggerRelease();
-    }
-    console.log('pressed');
+  setPart() {
+    const part = new Tone.Part((time, note) => {
+      this.instrument.triggerAttackRelease(note, "8n", time);
+    }, [[0, "C#2"], ["0:2", "E#3"], ["0:3:2", "G#2"]]);
+    part.start(0);
   }
 
   instrument() {

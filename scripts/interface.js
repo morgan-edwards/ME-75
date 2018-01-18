@@ -27,5 +27,12 @@ addVoiceButtons.forEach((btn) => {
   });
 });
 
-$('#start-transport').on('click', () => Tone.Transport.start());
-$('#stop-transport').on('click', () => Tone.Transport.stop());
+$('#start-transport').on('click', () => {
+  Tone.Transport.start();
+  console.log(Tone.Transport);
+});
+
+$('#stop-transport').on('click', () => {
+  Tone.Transport.stop();
+  console.log("stopped transport");
+});

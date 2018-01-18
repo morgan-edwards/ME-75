@@ -23895,10 +23895,13 @@ addVoiceButtons.forEach(function (btn) {
 });
 
 $('#start-transport').on('click', function () {
-  return _tone2.default.Transport.start();
+  _tone2.default.Transport.start();
+  console.log(_tone2.default.Transport);
 });
+
 $('#stop-transport').on('click', function () {
-  return _tone2.default.Transport.stop();
+  _tone2.default.Transport.stop();
+  console.log("stopped transport");
 });
 
 /***/ }),
@@ -23932,41 +23935,42 @@ var Voice = function () {
     this.range = range;
     this.instrument = new instrument();
     this.index = parseInt(_interface.voiceCounts[range]) + 1;
-    this.volume = new _tone2.default.Volume();
     _interface.voiceCounts[range] = this.index;
-    this.instrument.chain(this.volume, _tone2.default.Master);
+    this.instrument.toMaster();
     this.id = '' + range + _interface.voiceCounts[range];
     this.addVoice(this.range, this.id);
+    this.part = this.setPart();
   }
 
   _createClass(Voice, [{
     key: 'addVoice',
     value: function addVoice(range, id) {
-      var voiceDiv = '\n      <div id=' + id + ' class=\'voice\'>\n        <button id=\'' + id + '-play\'>Play</button>\n        <input\n          value=\'-12\'\n          max=\'6\'\n          min=\'-60\'\n          step=\'0.01\'\n          type=\'range\'\n          id=\'' + id + '-volume\' />\n        <button id=\'' + id + '-delete\'>Delete</button>\n      </div>\n    ';
+      var _this = this;
+
+      var voiceDiv = '\n      <div id=' + id + ' class=\'voice\'>\n        <input\n          value=\'-12\'\n          max=\'6\'\n          min=\'-60\'\n          step=\'0.01\'\n          type=\'range\'\n          id=\'' + id + '-volume\' />\n        <button id=\'' + id + '-delete\'>Delete</button>\n      </div>\n    ';
       $('#' + range).append(voiceDiv);
-      $('#' + id + '-play').click(this.togglePlay.bind(this));
       $('#' + id + '-volume').on('input', this.adjustVolume.bind(this));
       $('#' + id + '-delete').click(function () {
-        return $('#' + id).remove();
+        $('#' + id).remove();
+        _this.instrument.disconnect();
+        _this.instrument.dispose();
       });
-      this.togglePlay();
     }
   }, {
     key: 'adjustVolume',
     value: function adjustVolume(e) {
-      this.volume.volume.value = parseFloat(e.target.value);
+      this.instrument.volume.value = parseFloat(e.target.value);
       console.log(this.volume);
     }
   }, {
-    key: 'togglePlay',
-    value: function togglePlay() {
-      this.state['playing'] = !this.state.playing;
-      if (this.state.playing) {
-        this.instrument.triggerAttack("F4");
-      } else {
-        this.instrument.triggerRelease();
-      }
-      console.log('pressed');
+    key: 'setPart',
+    value: function setPart() {
+      var _this2 = this;
+
+      var part = new _tone2.default.Part(function (time, note) {
+        _this2.instrument.triggerAttackRelease(note, "8n", time);
+      }, [[0, "C#2"], ["0:2", "E#3"], ["0:3:2", "G#2"]]);
+      part.start(0);
     }
   }, {
     key: 'instrument',
