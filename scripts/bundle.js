@@ -60,11 +60,149 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 1);
+/******/ 	return __webpack_require__(__webpack_require__.s = 3);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.voiceCounts = undefined;
+
+var _voice = __webpack_require__(1);
+
+var _voice2 = _interopRequireDefault(_voice);
+
+var _tone = __webpack_require__(2);
+
+var _tone2 = _interopRequireDefault(_tone);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var voiceCounts = exports.voiceCounts = {
+  bass: 0,
+  baritone: 0,
+  tenor: 0,
+  alto: 0,
+  soprano: 0
+};
+
+var addVoiceButtons = [];
+var addBassBtn = document.getElementById('add-bass');
+addVoiceButtons.push(addBassBtn);
+var addBaritoneBtn = document.getElementById('add-baritone');
+addVoiceButtons.push(addBaritoneBtn);
+var addTenorBtn = document.getElementById('add-tenor');
+addVoiceButtons.push(addTenorBtn);
+var addAltoBtn = document.getElementById('add-alto');
+addVoiceButtons.push(addAltoBtn);
+var addSopranoBtn = document.getElementById('add-soprano');
+addVoiceButtons.push(addSopranoBtn);
+
+addVoiceButtons.forEach(function (btn) {
+  btn.addEventListener('click', function (e) {
+    new _voice2.default(e.target.value, _tone2.default.FMSynth);
+  });
+});
+
+$('#start-transport').on('click', function () {
+  _tone2.default.Transport.start();
+  console.log(_tone2.default.Transport);
+});
+
+$('#stop-transport').on('click', function () {
+  _tone2.default.Transport.stop();
+  console.log("stopped transport");
+});
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _tone = __webpack_require__(2);
+
+var _tone2 = _interopRequireDefault(_tone);
+
+var _interface = __webpack_require__(0);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Voice = function () {
+  function Voice(range, instrument) {
+    _classCallCheck(this, Voice);
+
+    this.state = { playing: false };
+    this.range = range;
+    this.instrument = new instrument();
+    this.index = parseInt(_interface.voiceCounts[range]) + 1;
+    _interface.voiceCounts[range] = this.index;
+    this.instrument.toMaster();
+    this.id = '' + range + _interface.voiceCounts[range];
+    this.addVoice(this.range, this.id);
+    this.part = this.setPart();
+  }
+
+  _createClass(Voice, [{
+    key: 'addVoice',
+    value: function addVoice(range, id) {
+      var _this = this;
+
+      var voiceDiv = '\n      <div id=' + id + ' class=\'voice\'>\n        <input\n          value=\'-12\'\n          max=\'6\'\n          min=\'-60\'\n          step=\'0.01\'\n          type=\'range\'\n          id=\'' + id + '-volume\' />\n        <button id=\'' + id + '-delete\'>Delete</button>\n      </div>\n    ';
+      $('#' + range).append(voiceDiv);
+      $('#' + id + '-volume').on('input', this.adjustVolume.bind(this));
+      $('#' + id + '-delete').click(function () {
+        $('#' + id).remove();
+        _this.instrument.disconnect();
+        _this.instrument.dispose();
+      });
+    }
+  }, {
+    key: 'adjustVolume',
+    value: function adjustVolume(e) {
+      this.instrument.volume.value = parseFloat(e.target.value);
+      console.log(this.volume);
+    }
+  }, {
+    key: 'setPart',
+    value: function setPart() {
+      var _this2 = this;
+
+      var part = new _tone2.default.Part(function (time, note) {
+        _this2.instrument.triggerAttackRelease(note, "8n", time);
+      }, [[0, "C#2"], ["0:2", "E#3"], ["0:3:2", "G#2"]]);
+      part.start(0);
+    }
+  }, {
+    key: 'instrument',
+    value: function instrument() {
+      this.instrument;
+    }
+  }]);
+
+  return Voice;
+}();
+
+exports.default = Voice;
+
+/***/ }),
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_RESULT__;(function(root, factory){
@@ -23792,35 +23930,35 @@ var __WEBPACK_AMD_DEFINE_RESULT__;(function(root, factory){
 }));
 
 /***/ }),
-/* 1 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-__webpack_require__(2);
-
-__webpack_require__(3);
+__webpack_require__(4);
 
 __webpack_require__(5);
 
-__webpack_require__(7);
+__webpack_require__(0);
 
-var _voice = __webpack_require__(6);
+__webpack_require__(6);
+
+var _voice = __webpack_require__(1);
 
 var _voice2 = _interopRequireDefault(_voice);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /***/ }),
-/* 2 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 /***/ }),
-/* 3 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23846,146 +23984,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 
 /***/ }),
-/* 4 */,
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.voiceCounts = undefined;
-
-var _voice = __webpack_require__(6);
-
-var _voice2 = _interopRequireDefault(_voice);
-
-var _tone = __webpack_require__(0);
-
-var _tone2 = _interopRequireDefault(_tone);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var voiceCounts = exports.voiceCounts = {
-  bass: 0,
-  baritone: 0,
-  tenor: 0,
-  alto: 0,
-  soprano: 0
-};
-
-var addVoiceButtons = [];
-var addBassBtn = document.getElementById('add-bass');
-addVoiceButtons.push(addBassBtn);
-var addBaritoneBtn = document.getElementById('add-baritone');
-addVoiceButtons.push(addBaritoneBtn);
-var addTenorBtn = document.getElementById('add-tenor');
-addVoiceButtons.push(addTenorBtn);
-var addAltoBtn = document.getElementById('add-alto');
-addVoiceButtons.push(addAltoBtn);
-var addSopranoBtn = document.getElementById('add-soprano');
-addVoiceButtons.push(addSopranoBtn);
-
-addVoiceButtons.forEach(function (btn) {
-  btn.addEventListener('click', function (e) {
-    new _voice2.default(e.target.value, _tone2.default.FMSynth);
-  });
-});
-
-$('#start-transport').on('click', function () {
-  _tone2.default.Transport.start();
-  console.log(_tone2.default.Transport);
-});
-
-$('#stop-transport').on('click', function () {
-  _tone2.default.Transport.stop();
-  console.log("stopped transport");
-});
-
-/***/ }),
 /* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _tone = __webpack_require__(0);
-
-var _tone2 = _interopRequireDefault(_tone);
-
-var _interface = __webpack_require__(5);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Voice = function () {
-  function Voice(range, instrument) {
-    _classCallCheck(this, Voice);
-
-    this.state = { playing: false };
-    this.range = range;
-    this.instrument = new instrument();
-    this.index = parseInt(_interface.voiceCounts[range]) + 1;
-    _interface.voiceCounts[range] = this.index;
-    this.instrument.toMaster();
-    this.id = '' + range + _interface.voiceCounts[range];
-    this.addVoice(this.range, this.id);
-    this.part = this.setPart();
-  }
-
-  _createClass(Voice, [{
-    key: 'addVoice',
-    value: function addVoice(range, id) {
-      var _this = this;
-
-      var voiceDiv = '\n      <div id=' + id + ' class=\'voice\'>\n        <input\n          value=\'-12\'\n          max=\'6\'\n          min=\'-60\'\n          step=\'0.01\'\n          type=\'range\'\n          id=\'' + id + '-volume\' />\n        <button id=\'' + id + '-delete\'>Delete</button>\n      </div>\n    ';
-      $('#' + range).append(voiceDiv);
-      $('#' + id + '-volume').on('input', this.adjustVolume.bind(this));
-      $('#' + id + '-delete').click(function () {
-        $('#' + id).remove();
-        _this.instrument.disconnect();
-        _this.instrument.dispose();
-      });
-    }
-  }, {
-    key: 'adjustVolume',
-    value: function adjustVolume(e) {
-      this.instrument.volume.value = parseFloat(e.target.value);
-      console.log(this.volume);
-    }
-  }, {
-    key: 'setPart',
-    value: function setPart() {
-      var _this2 = this;
-
-      var part = new _tone2.default.Part(function (time, note) {
-        _this2.instrument.triggerAttackRelease(note, "8n", time);
-      }, [[0, "C#2"], ["0:2", "E#3"], ["0:3:2", "G#2"]]);
-      part.start(0);
-    }
-  }, {
-    key: 'instrument',
-    value: function instrument() {
-      this.instrument;
-    }
-  }]);
-
-  return Voice;
-}();
-
-exports.default = Voice;
-
-/***/ }),
-/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
