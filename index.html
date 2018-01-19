@@ -13,26 +13,28 @@
       <h1>ME-75</h1>
     </header>
 
+    <form class="name-input">
+      <input type="text" placeholder="Enter your name" value="" />
+      <button class="create-melody">Play my name!</button>
+    </form>
+
     <div class="transport-controls">
       <button id="start-transport">Play</button>
       <button id="stop-transport">Clear</button>
     </div>
 
     <main class="all-voices">
-      <section id="bass">
-        <div value="bass" id="add-bass">Add Bass</div>
-      </section>
-      <section id="baritone">
-        <div value="baritone" id="add-baritone">Add Baritone</div>
-      </section>
-      <section id="tenor">
-        <div value="tenor" id="add-tenor">Add Tenor</div>
-      </section>
-      <section id="alto">
-        <div value="alto" id="add-alto">Add Alto</div>
-      </section>
-      <section id="soprano">
-        <div value="soprano" id="add-soprano">Add Soprano</div>
+      <section class="voice" id="bass">
+          <h2>Bass</h2>
+          <label for="bass-volume">Volume</label>
+          <input
+            class='slider'
+            value='-12'
+            max='6'
+            min='-60'
+            step='0.01'
+            type='range'
+            id='bass-volume' />
       </section>
     </main>
 

@@ -1,31 +1,11 @@
 import Voice from './voice';
 import Tone from 'tone';
+import * as Transcribe from './transcribers';
 
-export const voiceCounts = {
-  bass: 0,
-  baritone: 0,
-  tenor: 0,
-  alto: 0,
-  soprano: 0,
-};
+const melody = Transcribe.nameToMelody('morgan','major');
+console.log(melody);
 
-const addVoiceButtons = []
-const addBassBtn = document.getElementById('add-bass');
-addVoiceButtons.push(addBassBtn);
-const addBaritoneBtn = document.getElementById('add-baritone');
-addVoiceButtons.push(addBaritoneBtn);
-const addTenorBtn = document.getElementById('add-tenor');
-addVoiceButtons.push(addTenorBtn);
-const addAltoBtn = document.getElementById('add-alto');
-addVoiceButtons.push(addAltoBtn);
-const addSopranoBtn = document.getElementById('add-soprano');
-addVoiceButtons.push(addSopranoBtn);
-
-addVoiceButtons.forEach((btn) => {
-  btn.addEventListener('click', (e) => {
-    new Voice(e.target.value, Tone.FMSynth);
-  });
-});
+new Voice(melody, 'bass', Tone.FMSynth);
 
 $('#start-transport').on('click', () => {
   Tone.Transport.start();

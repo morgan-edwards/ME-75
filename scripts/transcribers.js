@@ -36,6 +36,6 @@ export const nameToKey = (string, mode) => {
 export const nameToMelody = (name, mode) => {
   const numArray = nameToPitches(name);
   const key = nameToKey(name, mode);
-  const melody = numArray.map(num => key[num]);
+  const melody = numArray.map(num => key[num]+'2');
   return melody;
 };

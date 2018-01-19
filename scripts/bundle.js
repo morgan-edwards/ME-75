@@ -70,11 +70,6 @@
 "use strict";
 
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.voiceCounts = undefined;
-
 var _voice = __webpack_require__(1);
 
 var _voice2 = _interopRequireDefault(_voice);
@@ -83,33 +78,18 @@ var _tone = __webpack_require__(2);
 
 var _tone2 = _interopRequireDefault(_tone);
 
+var _transcribers = __webpack_require__(7);
+
+var Transcribe = _interopRequireWildcard(_transcribers);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var voiceCounts = exports.voiceCounts = {
-  bass: 0,
-  baritone: 0,
-  tenor: 0,
-  alto: 0,
-  soprano: 0
-};
+var melody = Transcribe.nameToMelody('morgan', 'major');
+console.log(melody);
 
-var addVoiceButtons = [];
-var addBassBtn = document.getElementById('add-bass');
-addVoiceButtons.push(addBassBtn);
-var addBaritoneBtn = document.getElementById('add-baritone');
-addVoiceButtons.push(addBaritoneBtn);
-var addTenorBtn = document.getElementById('add-tenor');
-addVoiceButtons.push(addTenorBtn);
-var addAltoBtn = document.getElementById('add-alto');
-addVoiceButtons.push(addAltoBtn);
-var addSopranoBtn = document.getElementById('add-soprano');
-addVoiceButtons.push(addSopranoBtn);
-
-addVoiceButtons.forEach(function (btn) {
-  btn.addEventListener('click', function (e) {
-    new _voice2.default(e.target.value, _tone2.default.FMSynth);
-  });
-});
+new _voice2.default(melody, 'bass', _tone2.default.FMSynth);
 
 $('#start-transport').on('click', function () {
   _tone2.default.Transport.start();
@@ -138,40 +118,26 @@ var _tone = __webpack_require__(2);
 
 var _tone2 = _interopRequireDefault(_tone);
 
-var _interface = __webpack_require__(0);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Voice = function () {
-  function Voice(range, instrument) {
+  function Voice(part, range, instrument) {
     _classCallCheck(this, Voice);
 
     this.state = { playing: false };
     this.range = range;
     this.instrument = new instrument();
-    this.index = parseInt(_interface.voiceCounts[range]) + 1;
-    _interface.voiceCounts[range] = this.index;
     this.instrument.toMaster();
-    this.id = '' + range + _interface.voiceCounts[range];
-    this.addVoice(this.range, this.id);
-    this.part = this.setPart();
+    this.connectVoice(this.range);
+    this.setPart(part);
   }
 
   _createClass(Voice, [{
-    key: 'addVoice',
-    value: function addVoice(range, id) {
-      var _this = this;
-
-      var voiceDiv = '\n      <div id=' + id + ' class=\'voice\'>\n        <input\n          value=\'-12\'\n          max=\'6\'\n          min=\'-60\'\n          step=\'0.01\'\n          type=\'range\'\n          id=\'' + id + '-volume\' />\n        <button id=\'' + id + '-delete\'>Delete</button>\n      </div>\n    ';
-      $('#' + range).append(voiceDiv);
-      $('#' + id + '-volume').on('input', this.adjustVolume.bind(this));
-      $('#' + id + '-delete').click(function () {
-        $('#' + id).remove();
-        _this.instrument.disconnect();
-        _this.instrument.dispose();
-      });
+    key: 'connectVoice',
+    value: function connectVoice(range) {
+      $('#' + range + '-volume').on('input', this.adjustVolume.bind(this));
     }
   }, {
     key: 'adjustVolume',
@@ -181,13 +147,11 @@ var Voice = function () {
     }
   }, {
     key: 'setPart',
-    value: function setPart() {
-      var _this2 = this;
-
-      var part = new _tone2.default.Part(function (time, note) {
-        _this2.instrument.triggerAttackRelease(note, "8n", time);
-      }, [[0, "C#2"], ["0:2", "E#3"], ["0:3:2", "G#2"]]);
-      part.start(0);
+    value: function setPart(part) {
+      var pattern = new _tone2.default.Pattern(function (time, note) {
+        this.instrument.triggerAttackRelease(note, 0.25);
+      }.bind(this), part);
+      pattern.start(0);
     }
   }, {
     key: 'instrument',
@@ -24001,6 +23965,61 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 // part.start(0);
 // Tone.Transport.start();
 
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var nameToPitches = exports.nameToPitches = function nameToPitches(string) {
+  string = string.toLowerCase();
+  var base35 = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
+  var stringVals = string.split('').reduce(function (acc, ch) {
+    acc.unshift(base35.indexOf(ch) + 1);
+    return acc;
+  }, []);
+  var base10 = stringVals.map(function (num, idx) {
+    return num * Math.pow(35, idx);
+  }).reduce(function (acc, el) {
+    return acc + el;
+  });
+  var base7 = [];
+  var decimal = base10;
+  do {
+    base7.unshift(decimal % 7);
+    decimal = Math.floor(decimal / 7);
+  } while (decimal !== 0);
+
+  return base7;
+};
+
+var nameToKey = exports.nameToKey = function nameToKey(string, mode) {
+  var pitches = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+  var tonic = Math.floor((string[0].charCodeAt() - 96) / 2);
+  if (tonic > 12) tonic = 1;
+  var steps = mode === 'major' ? [2, 2, 1, 2, 2, 2] : [2, 1, 2, 2, 1, 2];
+  var key = [pitches[tonic]];
+
+  steps.forEach(function (step) {
+    var prevPitch = key[key.length - 1];
+    key.push(pitches[(pitches.indexOf(prevPitch) + step) % 12]);
+  });
+  return key;
+};
+
+var nameToMelody = exports.nameToMelody = function nameToMelody(name, mode) {
+  var numArray = nameToPitches(name);
+  var key = nameToKey(name, mode);
+  var melody = numArray.map(function (num) {
+    return key[num] + '2';
+  });
+  return melody;
+};
 
 /***/ })
 /******/ ]);
