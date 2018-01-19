@@ -4,37 +4,61 @@ import * as Transcribe from './transcribers';
 //Sets Nexus context to Tone context
 Nexus.context = Tone.context;
 
-//Default audio levels
-const defaultLevels = {
+//State
+const patterns = {};
+
+const waveTypes = {
+   0: 'sine',
+   1: 'square',
+   2: 'triangle',
+   3: 'sawtooth'
+ };
+
+const volumeLevels = {
   volume: -10,
   high: 10,
   low: -30,
-}
-// Callbacks
-const updatePlayState = (key, val) => {
-  playState[key] = val;
 };
 
-//State objects
+const compressorLevels = {
+  threshold: -24,
+  ratio: 12,
+};
+
+
+const eqLevels = {
+  lowLevelEq: volumeLevels.volume,
+  midLevelEq: volumeLevels.volume,
+  highLevelEq: volumeLevels.volume,
+};
+
 const playState = {
   playing: false,
   wave: 'sine',
-  volume: defaultLevels.volume,
-  lowLevelEq: defaultLevels.volume,
-  midLevelEq: defaultLevels.volume,
-  highLevelEq: defaultLevels.volume,
 };
-const waveTypes = { 0: 'sine', 1: 'square', 2: 'triangle', 3: 'sawtooth'};
-const patterns = {};
+
+
+// Callbacks
+const updateState = (type, key, val) => {
+  type[key] = val;
+};
+
+
 
 //Set up rack components
-const eq3 = new Tone.EQ3(defaultLevels.volume, defaultLevels.volume, defaultLevels.volume);
-eq3.toMaster();
+const compressor = new Tone.Compressor(volumeLevels.volume, volumeLevels.volume, volumeLevels.volume);
+compressor.toMaster();
+const eq3 = new Tone.EQ3(volumeLevels.volume, volumeLevels.volume, volumeLevels.volume);
+eq3.connect(compressor);
+const lowpassFilter = new Tone.Filter(350, 'lowpass');
+lowpassFilter.connect(eq3);
+const highpassFilter = new Tone.Filter(200, 'highpass');
+highpassFilter.connect(lowpassFilter);
 
 //Test Code
-var synth = new Tone.AMSynth();
+const synth = new Tone.AMSynth();
 synth.oscillator.type = playState.wave;
-synth.volume.value = playState.volume;
+synth.volume.value = volumeLevels.volume;
 
 synth.connect(eq3);
 const pattern = new Tone.Pattern(function(time, note){
@@ -62,7 +86,7 @@ const play = new Nexus.Button('#play-btn', {
 play.colorize("fill", "#ffffff");
 play.colorize("accent", "#ff0037");
 play.on('change', (v) => {
-  updatePlayState('playing', v);
+  updateState(playState, 'playing', v);
   updateTransport();
 });
 
@@ -82,42 +106,66 @@ control1.colorize("mediumDark", "#00ffa6");
 control1.oscilloscope.connect(synth);
 control1.waveForm.select(0);
 control1.waveForm.on('change', (v) => {
-  updatePlayState('wave', waveTypes[v]);
+  updateState(playState, 'wave', waveTypes[v]);
   synth.oscillator.type = playState.wave;
 });
 
 // Volume
 
-control1.volume.max = defaultLevels.high
-control1.volume.min = defaultLevels.low;
-control1.volume.value = defaultLevels.volume;
+control1.volume.max = volumeLevels.high;
+control1.volume.min = volumeLevels.low;
+control1.volume.value = volumeLevels.volume;
 
 control1.volume.on('change', (v) => {
-  updatePlayState('volume', v);
-  synth.volume.value = playState.volume;
+  updateState(volumeLevels, 'volume', v);
+  synth.volume.value = volumeLevels.volume;
 });
 
 // EQ
-control1.lowLevelEq.max = defaultLevels.high
-control1.lowLevelEq.min = defaultLevels.low;
-control1.lowLevelEq.value = defaultLevels.volume;
+control1.lowLevelEq.max = volumeLevels.high;
+control1.lowLevelEq.min = volumeLevels.low;
+control1.lowLevelEq.value = eqLevels.lowLevelEq;
 control1.lowLevelEq.on('change', (v) => {
-  updatePlayState('lowLevelEq', v);
-  eq3.low.value = playState.lowLevelEq;
+  updateState(eqLevels, 'lowLevelEq', v);
+  eq3.low.value = eqLevels.lowLevelEq;
 });
 
-control1.midLevelEq.max = defaultLevels.high
-control1.midLevelEq.min = defaultLevels.low;
-control1.midLevelEq.value = defaultLevels.volume;
+control1.midLevelEq.max = volumeLevels.high;
+control1.midLevelEq.min = volumeLevels.low;
+control1.midLevelEq.value = eqLevels.midLevelEq;
 control1.midLevelEq.on('change', (v) => {
-  updatePlayState('midLevelEq', v);
-  eq3.mid.value = playState.midLevelEq;
+  updateState(eqLevels, 'midLevelEq', v);
+  eq3.mid.value = eqLevels.midLevelEq;
 });
 
-control1.highLevelEq.max = defaultLevels.high
-control1.highLevelEq.min = defaultLevels.low;
-control1.highLevelEq.value = defaultLevels.volume;
+control1.highLevelEq.max = volumeLevels.high;
+control1.highLevelEq.min = volumeLevels.low;
+control1.highLevelEq.value = eqLevels.highLevelEq;
 control1.highLevelEq.on('change', (v) => {
-  updatePlayState('highLevelEq', v);
-  eq3.high.value = playState.highLevelEq;
+  updateState(eqLevels, 'highLevelEq', v);
+  eq3.high.value = eqLevels.highLevelEq;
 });
+
+
+//Compressor
+control1.threshold.max = 0;
+control1.threshold.min = -100;
+control1.threshold.value = compressorLevels.threshold;
+control1.threshold.on('change', (v) => {
+  updateState(compressorLevels, 'threshold', v);
+  compressor.threshold.value = compressorLevels.threshold;
+});
+
+control1.ratio.max = 20;
+control1.ratio.min = 1;
+control1.ratio.value = compressorLevels.ratio;
+control1.ratio.on('change', (v) => {
+  updateState(compressorLevels, 'ratio', v);
+  compressor.ratio.value = compressorLevels.ratio;
+});
+
+// //Filters
+// control1.lowpass.on('change', (v) => {
+//   updateState('filterLevels', 'lowpass', v);
+//   compressor.lowpass.value = filterLevels.lowpass;
+// });
