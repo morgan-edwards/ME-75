@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="./scripts/NexusUI.js"></script>
+    <link rel="stylesheet" href="./styles/reset.css" />
     <link rel="stylesheet" href="./styles/master.css" />
     <title>ME-75</title>
   </head>
@@ -13,29 +14,41 @@
       <h1>ME-75</h1>
     </header>
 
-    <form class="name-input">
-      <input type="text" placeholder="Enter your name" value="" />
-      <button class="create-melody">Play my name!</button>
-    </form>
+    <main>
+      <form class="name-input">
+        <input type="text" placeholder="Enter your name" value="" />
+        <button class="create-melody">Play my name!</button>
+      </form>
 
-    <div class="transport-controls">
-      <button id="start-transport">Play</button>
-      <button id="stop-transport">Clear</button>
-    </div>
+      <div class="transport">
+        <div class="transport-control" id="play-btn" />
+      </div>
 
-    <main class="all-voices">
-      <section class="voice" id="bass">
-          <h2>Bass</h2>
-          <label for="bass-volume">Volume</label>
-          <input
-            class='slider'
-            value='-12'
-            max='6'
-            min='-60'
-            step='0.01'
-            type='range'
-            id='bass-volume' />
-      </section>
+      <div id="voice-1" class="synth-container">
+
+        <section class="wave audio-rack">
+          <div nexus-ui="oscilloscope" id="oscilloscope" class="oscilloscope"></div>
+          <div nexus-ui="radiobutton" id="waveForm" class="wave-selector"></div>
+        </section>
+
+        <section class="primary-audio-ctrls audio-rack">
+          <div nexus-ui="dial" value="-27" id="volume" class="volume knob"></div>
+          <div class="eq sub-rack">
+            <div nexus-ui="dial" id="lowLevelEq" class="eq knob"></div>
+            <div nexus-ui="dial" id="midLevelEq" class="eq knob"></div>
+            <div nexus-ui="dial" id="highLevelEq" class="eq knob"></div>
+          </div>
+          <div class="compressor sub-rack">
+            <div nexus-ui="dial" id="threshold" class="compressor knob"></div>
+            <div nexus-ui="dial" id="ratio" class="compressor knob"></div>
+          </div>
+        </section>
+
+        <section class="filters audio-rack">
+          <div nexus-ui="dial" id="lowpass" class="filter knob"></div>
+          <div nexus-ui="dial" id="highpass" class="filter knob"></div>
+        </section>
+      </div>
     </main>
 
     <footer>

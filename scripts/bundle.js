@@ -60,113 +60,11 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 3);
+/******/ 	return __webpack_require__(__webpack_require__.s = 1);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _voice = __webpack_require__(1);
-
-var _voice2 = _interopRequireDefault(_voice);
-
-var _tone = __webpack_require__(2);
-
-var _tone2 = _interopRequireDefault(_tone);
-
-var _transcribers = __webpack_require__(7);
-
-var Transcribe = _interopRequireWildcard(_transcribers);
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var melody = Transcribe.nameToMelody('morgan', 'major');
-console.log(melody);
-
-new _voice2.default(melody, 'bass', _tone2.default.FMSynth);
-
-$('#start-transport').on('click', function () {
-  _tone2.default.Transport.start();
-  console.log(_tone2.default.Transport);
-});
-
-$('#stop-transport').on('click', function () {
-  _tone2.default.Transport.stop();
-  console.log("stopped transport");
-});
-
-/***/ }),
-/* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _tone = __webpack_require__(2);
-
-var _tone2 = _interopRequireDefault(_tone);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Voice = function () {
-  function Voice(part, range, instrument) {
-    _classCallCheck(this, Voice);
-
-    this.state = { playing: false };
-    this.range = range;
-    this.instrument = new instrument();
-    this.instrument.toMaster();
-    this.connectVoice(this.range);
-    this.setPart(part);
-  }
-
-  _createClass(Voice, [{
-    key: 'connectVoice',
-    value: function connectVoice(range) {
-      $('#' + range + '-volume').on('input', this.adjustVolume.bind(this));
-    }
-  }, {
-    key: 'adjustVolume',
-    value: function adjustVolume(e) {
-      this.instrument.volume.value = parseFloat(e.target.value);
-      console.log(this.volume);
-    }
-  }, {
-    key: 'setPart',
-    value: function setPart(part) {
-      var pattern = new _tone2.default.Pattern(function (time, note) {
-        this.instrument.triggerAttackRelease(note, 0.25);
-      }.bind(this), part);
-      pattern.start(0);
-    }
-  }, {
-    key: 'instrument',
-    value: function instrument() {
-      this.instrument;
-    }
-  }]);
-
-  return Voice;
-}();
-
-exports.default = Voice;
-
-/***/ }),
-/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_RESULT__;(function(root, factory){
@@ -23894,25 +23792,218 @@ var __WEBPACK_AMD_DEFINE_RESULT__;(function(root, factory){
 }));
 
 /***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+__webpack_require__(2);
+
+__webpack_require__(4);
+
+__webpack_require__(5);
+
+__webpack_require__(6);
+
+var _voice = __webpack_require__(7);
+
+var _voice2 = _interopRequireDefault(_voice);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _tone = __webpack_require__(0);
+
+var _tone2 = _interopRequireDefault(_tone);
+
+var _transcribers = __webpack_require__(3);
+
+var Transcribe = _interopRequireWildcard(_transcribers);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+//Sets Nexus context to Tone context
+Nexus.context = _tone2.default.context;
+
+//Default audio levels
+var defaultLevels = {
+  volume: -10,
+  high: 10,
+  low: -30
+  // Callbacks
+};var updatePlayState = function updatePlayState(key, val) {
+  playState[key] = val;
+};
+
+//State objects
+var playState = {
+  playing: false,
+  wave: 'sine',
+  volume: defaultLevels.volume,
+  lowLevelEq: defaultLevels.volume,
+  midLevelEq: defaultLevels.volume,
+  highLevelEq: defaultLevels.volume
+};
+var waveTypes = { 0: 'sine', 1: 'square', 2: 'triangle', 3: 'sawtooth' };
+var patterns = {};
+
+//Set up rack components
+var eq3 = new _tone2.default.EQ3(defaultLevels.volume, defaultLevels.volume, defaultLevels.volume);
+eq3.toMaster();
+
+//Test Code
+var synth = new _tone2.default.AMSynth();
+synth.oscillator.type = playState.wave;
+synth.volume.value = playState.volume;
+
+synth.connect(eq3);
+var pattern = new _tone2.default.Pattern(function (time, note) {
+  synth.triggerAttackRelease(note, 0.25);
+}, ["C4", "E4", "G4", "A4"]);
+
+pattern.start(0);
+
+//Transport callbacks
+var updateTransport = function updateTransport() {
+  if (playState.playing) {
+    _tone2.default.Transport.start();
+    console.log("Starting transport");
+  } else {
+    _tone2.default.Transport.stop();
+    console.log("Stopping transport");
+  }
+};
+
+//Transport GUI
+var play = new Nexus.Button('#play-btn', {
+  'mode': 'toggle'
+});
+play.colorize("fill", "#ffffff");
+play.colorize("accent", "#ff0037");
+play.on('change', function (v) {
+  updatePlayState('playing', v);
+  updateTransport();
+});
+
+// Builds and styles voice 1 interface
+
+var control1 = new Nexus.Rack("voice-1");
+control1.colorize("fill", "#ffffff");
+control1.colorize("accent", "#ff0037");
+control1.colorize("dark", "#ffaa00");
+control1.colorize("light", "#88ffa8");
+control1.colorize("mediumLight", "#ffaa00");
+control1.colorize("mediumDark", "#00ffa6");
+
+// Hooks up the controls to the voice
+
+//Oscilloscope
+control1.oscilloscope.connect(synth);
+control1.waveForm.select(0);
+control1.waveForm.on('change', function (v) {
+  updatePlayState('wave', waveTypes[v]);
+  synth.oscillator.type = playState.wave;
+});
+
+// Volume
+
+control1.volume.max = defaultLevels.high;
+control1.volume.min = defaultLevels.low;
+control1.volume.value = defaultLevels.volume;
+
+control1.volume.on('change', function (v) {
+  updatePlayState('volume', v);
+  synth.volume.value = playState.volume;
+});
+
+// EQ
+control1.lowLevelEq.max = defaultLevels.high;
+control1.lowLevelEq.min = defaultLevels.low;
+control1.lowLevelEq.value = defaultLevels.volume;
+control1.lowLevelEq.on('change', function (v) {
+  updatePlayState('lowLevelEq', v);
+  eq3.low.value = playState.lowLevelEq;
+});
+
+control1.midLevelEq.max = defaultLevels.high;
+control1.midLevelEq.min = defaultLevels.low;
+control1.midLevelEq.value = defaultLevels.volume;
+control1.midLevelEq.on('change', function (v) {
+  updatePlayState('midLevelEq', v);
+  eq3.mid.value = playState.midLevelEq;
+});
+
+control1.highLevelEq.max = defaultLevels.high;
+control1.highLevelEq.min = defaultLevels.low;
+control1.highLevelEq.value = defaultLevels.volume;
+control1.highLevelEq.on('change', function (v) {
+  updatePlayState('highLevelEq', v);
+  eq3.high.value = playState.highLevelEq;
+});
+
+/***/ }),
 /* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-__webpack_require__(4);
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var nameToPitches = exports.nameToPitches = function nameToPitches(string) {
+  string = string.toLowerCase();
+  var base35 = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
+  var stringVals = string.split('').reduce(function (acc, ch) {
+    acc.unshift(base35.indexOf(ch) + 1);
+    return acc;
+  }, []);
+  var base10 = stringVals.map(function (num, idx) {
+    return num * Math.pow(35, idx);
+  }).reduce(function (acc, el) {
+    return acc + el;
+  });
+  var base7 = [];
+  var decimal = base10;
+  do {
+    base7.unshift(decimal % 7);
+    decimal = Math.floor(decimal / 7);
+  } while (decimal !== 0);
 
-__webpack_require__(5);
+  return base7;
+};
 
-__webpack_require__(0);
+var nameToKey = exports.nameToKey = function nameToKey(string, mode) {
+  var pitches = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+  var tonic = Math.floor((string[0].charCodeAt() - 96) / 2);
+  if (tonic > 12) tonic = 1;
+  var steps = mode === 'major' ? [2, 2, 1, 2, 2, 2] : [2, 1, 2, 2, 1, 2];
+  var key = [pitches[tonic]];
 
-__webpack_require__(6);
+  steps.forEach(function (step) {
+    var prevPitch = key[key.length - 1];
+    key.push(pitches[(pitches.indexOf(prevPitch) + step) % 12]);
+  });
+  return key;
+};
 
-var _voice = __webpack_require__(1);
-
-var _voice2 = _interopRequireDefault(_voice);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var nameToMelody = exports.nameToMelody = function nameToMelody(name, mode) {
+  var numArray = nameToPitches(name);
+  var key = nameToKey(name, mode);
+  var melody = numArray.map(function (num) {
+    return key[num] + '2';
+  });
+  return melody;
+};
 
 /***/ }),
 /* 4 */
@@ -23976,50 +24067,59 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-var nameToPitches = exports.nameToPitches = function nameToPitches(string) {
-  string = string.toLowerCase();
-  var base35 = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
-  var stringVals = string.split('').reduce(function (acc, ch) {
-    acc.unshift(base35.indexOf(ch) + 1);
-    return acc;
-  }, []);
-  var base10 = stringVals.map(function (num, idx) {
-    return num * Math.pow(35, idx);
-  }).reduce(function (acc, el) {
-    return acc + el;
-  });
-  var base7 = [];
-  var decimal = base10;
-  do {
-    base7.unshift(decimal % 7);
-    decimal = Math.floor(decimal / 7);
-  } while (decimal !== 0);
 
-  return base7;
-};
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var nameToKey = exports.nameToKey = function nameToKey(string, mode) {
-  var pitches = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
-  var tonic = Math.floor((string[0].charCodeAt() - 96) / 2);
-  if (tonic > 12) tonic = 1;
-  var steps = mode === 'major' ? [2, 2, 1, 2, 2, 2] : [2, 1, 2, 2, 1, 2];
-  var key = [pitches[tonic]];
+var _tone = __webpack_require__(0);
 
-  steps.forEach(function (step) {
-    var prevPitch = key[key.length - 1];
-    key.push(pitches[(pitches.indexOf(prevPitch) + step) % 12]);
-  });
-  return key;
-};
+var _tone2 = _interopRequireDefault(_tone);
 
-var nameToMelody = exports.nameToMelody = function nameToMelody(name, mode) {
-  var numArray = nameToPitches(name);
-  var key = nameToKey(name, mode);
-  var melody = numArray.map(function (num) {
-    return key[num] + '2';
-  });
-  return melody;
-};
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Voice = function () {
+  function Voice(part, range, instrument) {
+    _classCallCheck(this, Voice);
+
+    this.state = { playing: false };
+    this.range = range;
+    this.instrument = new instrument();
+    this.instrument.toMaster();
+    this.connectVoice(this.range);
+    this.setPart(part);
+  }
+
+  _createClass(Voice, [{
+    key: 'connectVoice',
+    value: function connectVoice(range) {
+      $('#' + range + '-volume').on('input', this.adjustVolume.bind(this));
+    }
+  }, {
+    key: 'adjustVolume',
+    value: function adjustVolume(e) {
+      this.instrument.volume.value = parseFloat(e.target.value);
+      console.log(this.volume);
+    }
+  }, {
+    key: 'setPart',
+    value: function setPart(part) {
+      var pattern = new _tone2.default.Pattern(function (time, note) {
+        this.instrument.triggerAttackRelease(note, 0.25);
+      }.bind(this), part);
+      pattern.start(0);
+    }
+  }, {
+    key: 'instrument',
+    value: function instrument() {
+      this.instrument;
+    }
+  }]);
+
+  return Voice;
+}();
+
+exports.default = Voice;
 
 /***/ })
 /******/ ]);

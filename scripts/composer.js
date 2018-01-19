@@ -1,5 +1,3 @@
-
-
 class Composer {
   constructor() {
     this.chords = {

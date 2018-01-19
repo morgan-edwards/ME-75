@@ -1,19 +1,29 @@
-.all-voices {
+main {
   display: flex;
-  justify-content: space-around;
-  align-items: flex-start;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 50px;
 }
 
-.all-voices section {
+.synth-container {
+  background-color: black;
+  padding: 20px;
+  width: 600px;
   display: flex;
-  flex-direction: column;
   justify-content: center;
 }
-.voice {
+
+.audio-rack {
   display: flex;
-  height: 100px;
-  width: 200px;
-  background-color: gray;
-  justify-content: space-around;
   align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+}
+
+.sub-rack {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 20px;
 }
