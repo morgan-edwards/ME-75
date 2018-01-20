@@ -27,33 +27,27 @@ h3 {
   flex-direction: column;
   color: white;
   background-color: black;
-  padding: 20px;
-  width: 600px;
+  padding: 20px 0;
+  width: 900px;
   justify-content: center;
 }
 
 .synth-header {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  justify-content: space-around;
   align-items: center;
 }
 
-.title {
-  background-color: black;
-  position: absolute;
-  font-family: 'Anton', sans-serif;
-  font-size: 50px;
-  text-align: center;
-  height: 150px;
+.header-knob {
+  margin-top: -35px;
+}
+
+.control-panel {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 20px;
+  flex-direction: column;
 }
 
-.vol-osc {
-  margin-bottom: 20px;
+.osc-row {
 }
 
 .audio-rack {
@@ -75,6 +69,7 @@ h3 {
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 300px;
 }
 
 .rack-knob {
@@ -93,12 +88,19 @@ h3 {
   position: absolute;
   transform: rotate(90deg);
   top: 31px;
-  right: 20px;
+  right: 110px;
 }
 
-.radion-labels, li {
+li {
   font-family: 'Cabin', sans-serif;
   font-size: 14px;
   padding: 8px 0;
   transform: rotate(-20deg);
+}
+
+.rack-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-around;
+  height: 150px;
 }

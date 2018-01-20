@@ -84,25 +84,15 @@ const updateTransport = () => {
   }
 };
 
-//Transport GUI
-const play = new Nexus.Button('#play-btn', {
-  'mode': 'toggle',
-});
-play.colorize("fill", "#ffffff");
-play.colorize("accent", "#ff0037");
-play.on('change', (v) => {
-  updateState(playState, 'playing', v);
-  updateTransport();
-});
 
 //Control building helper functions
 const colorize = (component) => {
   component.colorize("fill", "#ffffff");
   component.colorize("accent", "#ff0037");
-  component.colorize("dark", "#ffaa00");
-  component.colorize("light", "#88ffa8");
-  component.colorize("mediumLight", "#ffaa00");
-  component.colorize("mediumDark", "#00ffa6");
+  component.colorize("dark", "#ff0037");
+  component.colorize("light", "#ff0037");
+  component.colorize("mediumLight", "#ff0037");
+  component.colorize("mediumDark", "#ff0037");
 };
 
 const createDial = (min, max, val, id) => {
@@ -129,9 +119,20 @@ const generateDial = dialObj => {
 };
 // Builds and styles voice 1
 
+//Transport Controls
+const play = new Nexus.Button('#play-btn', {
+  'mode': 'toggle',
+  'size': [50,50],
+});
+colorize(play);
+play.on('change', (v) => {
+  updateState(playState, 'playing', v);
+  updateTransport();
+});
+
 //Oscilloscope
 const oscilloscope = new Nexus.Oscilloscope('#oscilloscope', {
-  'size': [600, 150]
+  'size': [350, 150]
 });
 oscilloscope.connect(Tone.Master);
 oscilloscope.colorize("fill", "#000000");
