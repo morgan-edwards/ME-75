@@ -23806,6 +23806,8 @@ __webpack_require__(5);
 
 __webpack_require__(6);
 
+__webpack_require__(8);
+
 var _voice = __webpack_require__(7);
 
 var _voice2 = _interopRequireDefault(_voice);
@@ -23818,6 +23820,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 "use strict";
 
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.synth = undefined;
 
 var _tone = __webpack_require__(0);
 
@@ -23836,35 +23843,26 @@ Nexus.context = _tone2.default.context;
 
 //State
 var patterns = {};
-
 var waveTypes = {
   0: 'sine',
   1: 'square',
   2: 'triangle',
   3: 'sawtooth'
 };
-
-var volumeLevels = {
-  volume: -10,
-  high: 10,
-  low: -30
-};
-
-var compressorLevels = {
-  threshold: -24,
-  ratio: 12
-};
-
+var playState = { playing: false, wave: 'sine' };
+var synthSettings = { attack: 0.25, release: 0.25 };
+var volumeLevels = { volume: -10, high: 10, low: -30 };
+var compressorLevels = { threshold: -24, ratio: 12 };
 var eqLevels = {
   lowLevelEq: volumeLevels.volume,
   midLevelEq: volumeLevels.volume,
   highLevelEq: volumeLevels.volume
 };
-
-var playState = {
-  playing: false,
-  wave: 'sine'
-};
+var filterLevels = { lowpass: 4200, highpass: 0 };
+var chorusLevels = { freq: 0, delay: 0, depth: 0 };
+var delayLevels = { time: 0, feedback: 0, wet: 0 };
+var reverbLevels = { roomSize: 0, wet: 0 };
+var distLevels = { dist: 0, wet: 0 };
 
 // Callbacks
 var updateState = function updateState(type, key, val) {
@@ -23873,34 +23871,37 @@ var updateState = function updateState(type, key, val) {
 
 //Set up rack components
 var compressor = new _tone2.default.Compressor(volumeLevels.volume, volumeLevels.volume, volumeLevels.volume);
-compressor.toMaster();
 var eq3 = new _tone2.default.EQ3(volumeLevels.volume, volumeLevels.volume, volumeLevels.volume);
-eq3.connect(compressor);
-var lowpassFilter = new _tone2.default.Filter(350, 'lowpass');
-lowpassFilter.connect(eq3);
-var highpassFilter = new _tone2.default.Filter(200, 'highpass');
-highpassFilter.connect(lowpassFilter);
+var lowpassFilter = new _tone2.default.Filter(filterLevels.lowpass, 'lowpass');
+var highpassFilter = new _tone2.default.Filter(filterLevels.highpass, 'highpass');
+var reverb = new _tone2.default.JCReverb(reverbLevels.roomSize);
+var chorus = new _tone2.default.Chorus(chorusLevels.freq, chorusLevels.delay, chorusLevels.depth);
+var delay = new _tone2.default.FeedbackDelay(delayLevels.time, delayLevels.feedback);
+var distortion = new _tone2.default.Distortion(distLevels.dist);
 
-//Test Code
-var synth = new _tone2.default.AMSynth();
+//Synth Setup
+var synth = exports.synth = new _tone2.default.AMSynth();
 synth.oscillator.type = playState.wave;
 synth.volume.value = volumeLevels.volume;
+synth.envelope.attack = synthSettings.attack;
+synth.envelope.release = synthSettings.release;
+synth.chain(compressor, chorus, delay, distortion, reverb, lowpassFilter, highpassFilter, eq3, _tone2.default.Master);
 
-synth.connect(eq3);
-var pattern = new _tone2.default.Pattern(function (time, note) {
-  synth.triggerAttackRelease(note, 0.25);
-}, ["C4", "E4", "G4", "A4"]);
+// TEST AUDIO
+var pattern = new _tone2.default.Part(function (time, value) {
+  //the value is an object which contains both the note and the velocity
+  synth.triggerAttackRelease(value.note, value.dur, time, value.velocity);
+}, [{ "time": 0, "note": "C3", "velocity": 0.9, "dur": "8n" }, { "time": "0:2", "note": "G4", "velocity": 0.5, "dur": "4n" }]).start(0);
 
+pattern.loop = true;
 pattern.start(0);
 
 //Transport callbacks
 var updateTransport = function updateTransport() {
   if (playState.playing) {
     _tone2.default.Transport.start();
-    console.log("Starting transport");
   } else {
     _tone2.default.Transport.stop();
-    console.log("Stopping transport");
   }
 };
 
@@ -23988,11 +23989,126 @@ control1.ratio.on('change', function (v) {
   compressor.ratio.value = compressorLevels.ratio;
 });
 
-// //Filters
-// control1.lowpass.on('change', (v) => {
-//   updateState('filterLevels', 'lowpass', v);
-//   compressor.lowpass.value = filterLevels.lowpass;
-// });
+//Filters
+control1.lowpass.max = 4200;
+control1.lowpass.min = 27;
+control1.lowpass.value = filterLevels.lowpass;
+control1.lowpass.on('change', function (v) {
+  updateState(filterLevels, 'lowpass', v);
+  lowpassFilter.frequency.value = filterLevels.lowpass;
+});
+
+control1.highpass.max = 4200;
+control1.highpass.min = 27;
+control1.highpass.value = filterLevels.highpass;
+control1.highpass.on('change', function (v) {
+  updateState(filterLevels, 'highpass', v);
+  highpassFilter.frequency.value = filterLevels.highpass;
+});
+
+//Attack-Release
+control1.attack.max = 5;
+control1.attack.min = 0.01;
+control1.attack.value = synthSettings.attack;
+control1.attack.on('change', function (v) {
+  updateState(synthSettings, 'attack', v);
+  synth.envelope.attack = synthSettings.attack;
+});
+
+control1.release.max = 5;
+control1.release.min = 0.01;
+control1.release.value = synthSettings.release;
+control1.release.on('change', function (v) {
+  updateState(synthSettings, 'release', v);
+  synth.envelope.release = synthSettings.release;
+});
+
+//Chorus
+control1.chorusFreq.max = 3;
+control1.chorusFreq.min = 0;
+control1.chorusFreq.value = chorusLevels.freq;
+control1.chorusFreq.on('change', function (v) {
+  updateState(chorusLevels, 'freq', v);
+  chorus.frequency.value = chorusLevels.freq;
+});
+
+control1.chorusDel.max = 7;
+control1.chorusDel.min = 0;
+control1.chorusDel.value = chorusLevels.delay;
+control1.chorusDel.on('change', function (v) {
+  updateState(chorusLevels, 'delay', v);
+  chorus.delayTime = chorusLevels.delay;
+});
+
+control1.chorusDep.max = 5;
+control1.chorusDep.min = 0;
+control1.chorusDep.value = chorusLevels.depth;
+control1.chorusDep.on('change', function (v) {
+  updateState(chorusLevels, 'depth', v);
+  chorus.depth = chorusLevels.depth;
+});
+
+//Delay
+control1.delayTime.max = 1;
+control1.delayTime.min = 0;
+control1.delayTime.value = delayLevels.time;
+control1.delayTime.on('change', function (v) {
+  updateState(delayLevels, 'time', v);
+  delay.delayTime.value = delayLevels.time;
+});
+
+control1.delayFeedback.max = 1;
+control1.delayFeedback.min = 0;
+control1.delayFeedback.value = delayLevels.feedback;
+control1.delayFeedback.on('change', function (v) {
+  updateState(delayLevels, 'feedback', v);
+  delay.feedback.value = delayLevels.feedback;
+});
+
+control1.delayWet.max = 1;
+control1.delayWet.min = 0;
+control1.delayWet.value = delayLevels.wet;
+delay.wet.value = delayLevels.wet;
+control1.delayWet.on('change', function (v) {
+  updateState(delayLevels, 'wet', v);
+  delay.wet.value = delayLevels.wet;
+});
+
+//Reverb
+control1.reverb.max = 1;
+control1.reverb.min = 0;
+control1.reverb.value = reverbLevels.roomSize;
+control1.reverb.on('change', function (v) {
+  updateState(reverbLevels, 'roomSize', v);
+  reverb.roomSize.value = reverbLevels.roomSize;
+});
+
+control1.revWet.max = 1;
+control1.revWet.min = 0;
+control1.revWet.value = reverbLevels.wet;
+reverb.wet.value = reverbLevels.wet;
+control1.revWet.on('change', function (v) {
+  updateState(reverbLevels, 'wet', v);
+  reverb.wet.value = reverbLevels.wet;
+});
+
+//Distortion
+control1.dist.max = 5;
+control1.dist.min = 0;
+control1.dist.value = distLevels.dist;
+control1.dist.on('change', function (v) {
+  updateState(distLevels, 'dist', v);
+  distortion.distortion = distLevels.dist;
+});
+
+control1.distWet.max = 1;
+control1.distWet.min = 0;
+control1.distWet.value = distLevels.wet;
+distortion.wet.value = distLevels.wet;
+control1.distWet.on('change', function (v) {
+  updateState(distLevels, 'wet', v);
+  distortion.wet.value = distLevels.wet;
+});
 
 /***/ }),
 /* 3 */
@@ -24164,6 +24280,74 @@ var Voice = function () {
 }();
 
 exports.default = Voice;
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _gui = __webpack_require__(2);
+
+var currentPitch = { key: null, octave: 4 };
+
+var playKey = function playKey(pitch, octave, e) {
+  _gui.synth.triggerAttack('' + pitch + octave);
+  currentPitch.key = e.key;
+};
+
+document.addEventListener('keydown', function (e) {
+  switch (e.key) {
+    case 's':
+      playKey('C', currentPitch.octave, e);
+      break;
+    case 'e':
+      playKey('C#', currentPitch.octave, e);
+      break;
+    case 'd':
+      playKey('D', currentPitch.octave, e);
+      break;
+    case 'r':
+      playKey('D#', currentPitch.octave, e);
+      break;
+    case 'f':
+      playKey('E', currentPitch.octave, e);
+      break;
+    case 'g':
+      playKey('F', currentPitch.octave, e);
+      break;
+    case 'y':
+      playKey('F#', currentPitch.octave, e);
+      break;
+    case 'h':
+      playKey('G', currentPitch.octave, e);
+      break;
+    case 'u':
+      playKey('G#', currentPitch.octave, e);
+      break;
+    case 'j':
+      playKey('A', currentPitch.octave, e);
+      break;
+    case 'i':
+      playKey('A#', currentPitch.octave, e);
+      break;
+    case 'k':
+      playKey('B', currentPitch.octave, e);
+      break;
+    case 'l':
+      playKey('C', currentPitch.octave + 1, e);
+      break;
+    default:
+      return null;
+  }
+});
+
+document.addEventListener('keyup', function (e) {
+  if (currentPitch.key === e.key) {
+    _gui.synth.triggerRelease();
+  }
+});
 
 /***/ })
 /******/ ]);

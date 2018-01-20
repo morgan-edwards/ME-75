@@ -26,13 +26,15 @@
 
       <div id="voice-1" class="synth-container">
 
-        <section class="wave audio-rack">
+        <section class="wave-selector audio-rack">
           <div nexus-ui="oscilloscope" id="oscilloscope" class="oscilloscope"></div>
-          <div nexus-ui="radiobutton" id="waveForm" class="wave-selector"></div>
+          <div>
+            <div nexus-ui="radiobutton" id="waveForm" class="wave-selector"></div>
+            <div nexus-ui="dial" value="-27" id="volume" class="volume knob"></div>
+          </div>
         </section>
 
-        <section class="primary-audio-ctrls audio-rack">
-          <div nexus-ui="dial" value="-27" id="volume" class="volume knob"></div>
+        <section class="audio-rack">
           <div class="eq sub-rack">
             <div nexus-ui="dial" id="lowLevelEq" class="eq knob"></div>
             <div nexus-ui="dial" id="midLevelEq" class="eq knob"></div>
@@ -44,11 +46,40 @@
           </div>
         </section>
 
-        <section class="filters audio-rack">
-          <div nexus-ui="dial" id="lowpass" class="filter knob"></div>
-          <div nexus-ui="dial" id="highpass" class="filter knob"></div>
+        <section class="audio-rack">
+          <div class="filters sub-rack">
+            <div nexus-ui="dial" id="lowpass" class="filter knob"></div>
+            <div nexus-ui="dial" id="highpass" class="filter knob"></div>
+          </div>
+          <div class="attack-release sub-rack">
+            <div nexus-ui="dial" id="attack" class="att-del knob"></div>
+            <div nexus-ui="dial" id="release" class="att-del knob"></div>
+          </div>
         </section>
-      </div>
+
+        <section class="audio-rack">
+          <div class="chorus sub-rack">
+            <div nexus-ui="dial" id="chorusFreq" class="filter knob"></div>
+            <div nexus-ui="dial" id="chorusDel" class="filter knob"></div>
+            <div nexus-ui="dial" id="chorusDep" class="filter knob"></div>
+          </div>
+          <div class="delay sub-rack">
+            <div nexus-ui="dial" id="delayTime" class="filter knob"></div>
+            <div nexus-ui="dial" id="delayFeedback" class="filter knob"></div>
+            <div nexus-ui="dial" id="delayWet" class="filter knob"></div>
+          </div>
+        </section>
+
+        <section class="audio-rack">
+          <div class="reverb sub-rack">
+            <div nexus-ui="dial" id="reverb" class="filter knob"></div>
+            <div nexus-ui="dial" id="revWet" class="filter knob"></div>
+          </div>
+          <div class="distortion sub-rack">
+            <div nexus-ui="dial" id="dist" class="filter knob"></div>
+            <div nexus-ui="dial" id="distWet" class="filter knob"></div>
+          </div>
+        </section>
     </main>
 
     <footer>
