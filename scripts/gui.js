@@ -22,10 +22,10 @@ const eqLevels = {
   highLevelEq: volumeLevels.volume,
 };
 const filterLevels = { lowpass: 4200, highpass: 0, };
-const chorusLevels = { freq: 0, delay: 0, depth: 0 };
-const delayLevels = { time: 0, feedback: 0, wet: 0};
-const reverbLevels = { roomSize: 0, wet: 0 };
-const distLevels = { dist: 0, wet: 0 };
+const chorusLevels = { chorusFreq: 0, chorusDel: 0, chorusDep: 0 };
+const delayLevels = { delayTime: 0, delayFeedback: 0, delayWet: 0};
+const reverbLevels = { roomSize: 0, revWet: 0 };
+const distLevels = { dist: 0, distWet: 0 };
 
 // Callbacks
 const updateState = (type, key, val) => {
@@ -41,6 +41,9 @@ const reverb = new Tone.JCReverb(reverbLevels.roomSize);
 const chorus = new Tone.Chorus(chorusLevels.freq, chorusLevels.delay, chorusLevels.depth);
 const delay = new Tone.FeedbackDelay(delayLevels.time, delayLevels.feedback);
 const distortion = new Tone.Distortion(distLevels.dist);
+//Sets defaults
+distortion.wet.value = distLevels.distWet;
+reverb.wet.value = reverbLevels.revWet;
 
 //Synth Setup
 export const synth = new Tone.AMSynth();
@@ -92,197 +95,252 @@ play.on('change', (v) => {
   updateTransport();
 });
 
-// Builds and styles voice 1 interface
+//Control building helper functions
+const colorize = (component) => {
+  component.colorize("fill", "#ffffff");
+  component.colorize("accent", "#ff0037");
+  component.colorize("dark", "#ffaa00");
+  component.colorize("light", "#88ffa8");
+  component.colorize("mediumLight", "#ffaa00");
+  component.colorize("mediumDark", "#00ffa6");
+};
 
-const control1 = new Nexus.Rack("voice-1");
-control1.colorize("fill", "#ffffff");
-control1.colorize("accent", "#ff0037");
-control1.colorize("dark", "#ffaa00");
-control1.colorize("light", "#88ffa8");
-control1.colorize("mediumLight", "#ffaa00");
-control1.colorize("mediumDark", "#00ffa6");
+const createDial = (min, max, val, id) => {
+  const dial = new Nexus.Dial(id, {
+    'size': [50, 50],
+    'min': min,
+    'max': max,
+    'value': val,
+  });
+  colorize(dial);
+  return dial;
+};
 
-// Hooks up the controls to the voice
+const activateDial = (dial, state, targetObj, targetKey, id) => {
+  dial.on('change', (v) => {
+    updateState(state, id, v);
+    targetObj[targetKey] = state[id];
+  });
+};
+
+const generateDial = dialObj => {
+  const dial = createDial(dialObj.min,dialObj.max,dialObj.val,dialObj.id);
+  activateDial(dial, dialObj.state, dialObj.target, dialObj.key, dialObj.id);
+};
+// Builds and styles voice 1
 
 //Oscilloscope
-control1.oscilloscope.connect(synth);
-control1.waveForm.select(0);
-control1.waveForm.on('change', (v) => {
+const oscilloscope = new Nexus.Oscilloscope('#oscilloscope', {
+  'size': [600, 150]
+});
+oscilloscope.connect(Tone.Master);
+oscilloscope.colorize("fill", "#000000");
+oscilloscope.colorize("accent", "#ffffff");
+
+//Wavefrom selector control1.waveForm.select(0);
+const waveformSelector = new Nexus.RadioButton('waveform', {
+  'active': 0
+});
+colorize(waveformSelector);
+waveformSelector.on('change', (v) => {
   updateState(playState, 'wave', waveTypes[v]);
   synth.oscillator.type = playState.wave;
 });
 
 // Volume
-
-control1.volume.max = volumeLevels.high;
-control1.volume.min = volumeLevels.low;
-control1.volume.value = volumeLevels.volume;
-
-control1.volume.on('change', (v) => {
-  updateState(volumeLevels, 'volume', v);
-  synth.volume.value = volumeLevels.volume;
+generateDial({
+  min: volumeLevels.low,
+  max: volumeLevels.high,
+  val: volumeLevels.volume,
+  id: 'volume',
+  state: volumeLevels,
+  target: synth.volume,
+  key: 'value',
 });
 
-// EQ
-control1.lowLevelEq.max = volumeLevels.high;
-control1.lowLevelEq.min = volumeLevels.low;
-control1.lowLevelEq.value = eqLevels.lowLevelEq;
-control1.lowLevelEq.on('change', (v) => {
-  updateState(eqLevels, 'lowLevelEq', v);
-  eq3.low.value = eqLevels.lowLevelEq;
+// // EQ
+generateDial({
+  min: volumeLevels.low,
+  max: volumeLevels.high,
+  val: eqLevels.lowLevelEq,
+  id: 'lowLevelEq',
+  state: eqLevels,
+  target: eq3.low,
+  key: 'value',
+});
+generateDial({
+  min: volumeLevels.low,
+  max: volumeLevels.high,
+  val: eqLevels.midLevelEq,
+  id: 'midLevelEq',
+  state: eqLevels,
+  target: eq3.mid,
+  key: 'value',
+});
+generateDial({
+  min: volumeLevels.low,
+  max: volumeLevels.high,
+  val: eqLevels.highLevelEq,
+  id: 'highLevelEq',
+  state: eqLevels,
+  target: eq3.high,
+  key: 'value',
 });
 
-control1.midLevelEq.max = volumeLevels.high;
-control1.midLevelEq.min = volumeLevels.low;
-control1.midLevelEq.value = eqLevels.midLevelEq;
-control1.midLevelEq.on('change', (v) => {
-  updateState(eqLevels, 'midLevelEq', v);
-  eq3.mid.value = eqLevels.midLevelEq;
+// //Compressor
+generateDial({
+  min: -100,
+  max: 0,
+  val: compressorLevels.threshold,
+  id: 'threshold',
+  state: compressorLevels,
+  target: compressor.threshold,
+  key: 'value',
+});
+generateDial({
+  min: 1,
+  max: 20,
+  val: compressorLevels.ratio,
+  id: 'ratio',
+  state: compressorLevels,
+  target: compressor.ratio,
+  key: 'value',
 });
 
-control1.highLevelEq.max = volumeLevels.high;
-control1.highLevelEq.min = volumeLevels.low;
-control1.highLevelEq.value = eqLevels.highLevelEq;
-control1.highLevelEq.on('change', (v) => {
-  updateState(eqLevels, 'highLevelEq', v);
-  eq3.high.value = eqLevels.highLevelEq;
+// //Filters
+generateDial({
+  min: 27,
+  max: 4200,
+  val: filterLevels.lowpass,
+  id: 'lowpass',
+  state: filterLevels,
+  target: lowpassFilter.frequency,
+  key: 'value',
+});
+generateDial({
+  min: 27,
+  max: 4200,
+  val: filterLevels.highpass,
+  id: 'highpass',
+  state: filterLevels,
+  target: highpassFilter.frequency,
+  key: 'value',
 });
 
-
-//Compressor
-control1.threshold.max = 0;
-control1.threshold.min = -100;
-control1.threshold.value = compressorLevels.threshold;
-control1.threshold.on('change', (v) => {
-  updateState(compressorLevels, 'threshold', v);
-  compressor.threshold.value = compressorLevels.threshold;
+// //Attack-Release
+generateDial({
+  min: 0.01,
+  max: 5,
+  val: synthSettings.attack,
+  id: 'attack',
+  state: synthSettings,
+  target: synth.envelope,
+  key: 'attack',
+});
+generateDial({
+  min: 0.01,
+  max: 5,
+  val: synthSettings.release,
+  id: 'release',
+  state: synthSettings,
+  target: synth.envelope,
+  key: 'release',
 });
 
-control1.ratio.max = 20;
-control1.ratio.min = 1;
-control1.ratio.value = compressorLevels.ratio;
-control1.ratio.on('change', (v) => {
-  updateState(compressorLevels, 'ratio', v);
-  compressor.ratio.value = compressorLevels.ratio;
+// //Chorus
+generateDial({
+  min: 0,
+  max: 3,
+  val: chorusLevels.chorusFreq,
+  id: 'chorusFreq',
+  state: chorusLevels,
+  target: chorus.frequency,
+  key: 'value',
+});
+generateDial({
+  min: 0,
+  max: 3,
+  val: chorusLevels.chorusDel,
+  id: 'chorusDel',
+  state: chorusLevels,
+  target: chorus,
+  key: 'delayTime',
+});
+generateDial({
+  min: 0,
+  max: 3,
+  val: chorusLevels.chorusDep,
+  id: 'chorusDep',
+  state: chorusLevels,
+  target: chorus,
+  key: 'depth',
 });
 
-//Filters
-control1.lowpass.max = 4200;
-control1.lowpass.min = 27;
-control1.lowpass.value = filterLevels.lowpass;
-control1.lowpass.on('change', (v) => {
-  updateState(filterLevels, 'lowpass', v);
-  lowpassFilter.frequency.value = filterLevels.lowpass;
+// //Delay
+generateDial({
+  min: 0,
+  max: 1,
+  val: delayLevels.delayTime,
+  id: 'delayTime',
+  state: delayLevels,
+  target: delay.delayTime,
+  key: 'value',
+});
+generateDial({
+  min: 0,
+  max: 1,
+  val: delayLevels.delayFeedback,
+  id: 'delayFeedback',
+  state: delayLevels,
+  target: delay.feedback,
+  key: 'value',
+});
+generateDial({
+  min: 0,
+  max: 1,
+  val: delayLevels.delayWet,
+  id: 'delayWet',
+  state: delayLevels,
+  target: delay.wet,
+  key: 'value',
 });
 
-control1.highpass.max = 4200;
-control1.highpass.min = 27;
-control1.highpass.value = filterLevels.highpass;
-control1.highpass.on('change', (v) => {
-  updateState(filterLevels, 'highpass', v);
-  highpassFilter.frequency.value = filterLevels.highpass;
+// //Reverb
+generateDial({
+  min: 0,
+  max: 1,
+  val: reverbLevels.roomSize,
+  id: 'roomSize',
+  state: reverbLevels,
+  target: reverb.roomSize,
+  key: 'value',
+});
+generateDial({
+  min: 0,
+  max: 1,
+  val: reverbLevels.revWet,
+  id: 'revWet',
+  state: reverbLevels,
+  target: reverb.wet,
+  key: 'value',
 });
 
-//Attack-Release
-control1.attack.max = 5;
-control1.attack.min = 0.01;
-control1.attack.value = synthSettings.attack;
-control1.attack.on('change', (v) => {
-  updateState(synthSettings, 'attack', v);
-  synth.envelope.attack = synthSettings.attack;
+// Distortion
+generateDial({
+  min: 0,
+  max: 5,
+  val: distLevels.dist,
+  id: 'dist',
+  state: distLevels,
+  target: distortion,
+  key: 'distortion',
 });
-
-control1.release.max = 5;
-control1.release.min = 0.01;
-control1.release.value = synthSettings.release;
-control1.release.on('change', (v) => {
-  updateState(synthSettings, 'release', v);
-  synth.envelope.release = synthSettings.release;
-});
-
-//Chorus
-control1.chorusFreq.max = 3;
-control1.chorusFreq.min = 0;
-control1.chorusFreq.value = chorusLevels.freq;
-control1.chorusFreq.on('change', (v) => {
-  updateState(chorusLevels, 'freq', v);
-  chorus.frequency.value = chorusLevels.freq;
-});
-
-control1.chorusDel.max = 7;
-control1.chorusDel.min = 0;
-control1.chorusDel.value = chorusLevels.delay;
-control1.chorusDel.on('change', (v) => {
-  updateState(chorusLevels, 'delay', v);
-  chorus.delayTime = chorusLevels.delay;
-});
-
-control1.chorusDep.max = 5;
-control1.chorusDep.min = 0;
-control1.chorusDep.value = chorusLevels.depth;
-control1.chorusDep.on('change', (v) => {
-  updateState(chorusLevels, 'depth', v);
-  chorus.depth = chorusLevels.depth;
-});
-
-//Delay
-control1.delayTime.max = 1;
-control1.delayTime.min = 0;
-control1.delayTime.value = delayLevels.time;
-control1.delayTime.on('change', (v) => {
-  updateState(delayLevels, 'time', v);
-  delay.delayTime.value = delayLevels.time;
-});
-
-control1.delayFeedback.max = 1;
-control1.delayFeedback.min = 0;
-control1.delayFeedback.value = delayLevels.feedback;
-control1.delayFeedback.on('change', (v) => {
-  updateState(delayLevels, 'feedback', v);
-  delay.feedback.value = delayLevels.feedback;
-});
-
-control1.delayWet.max = 1;
-control1.delayWet.min = 0;
-control1.delayWet.value = delayLevels.wet;
-delay.wet.value = delayLevels.wet;
-control1.delayWet.on('change', (v) => {
-  updateState(delayLevels, 'wet', v);
-  delay.wet.value = delayLevels.wet;
-});
-
-//Reverb
-control1.reverb.max = 1;
-control1.reverb.min = 0;
-control1.reverb.value = reverbLevels.roomSize;
-control1.reverb.on('change', (v) => {
-  updateState(reverbLevels, 'roomSize', v);
-  reverb.roomSize.value = reverbLevels.roomSize;
-});
-
-control1.revWet.max = 1;
-control1.revWet.min = 0;
-control1.revWet.value = reverbLevels.wet;
-reverb.wet.value = reverbLevels.wet;
-control1.revWet.on('change', (v) => {
-  updateState(reverbLevels, 'wet', v);
-  reverb.wet.value = reverbLevels.wet;
-});
-
-//Distortion
-control1.dist.max = 5;
-control1.dist.min = 0;
-control1.dist.value = distLevels.dist;
-control1.dist.on('change', (v) => {
-  updateState(distLevels, 'dist', v);
-  distortion.distortion = distLevels.dist;
-});
-
-control1.distWet.max = 1;
-control1.distWet.min = 0;
-control1.distWet.value = distLevels.wet;
-distortion.wet.value = distLevels.wet;
-control1.distWet.on('change', (v) => {
-  updateState(distLevels, 'wet', v);
-  distortion.wet.value = distLevels.wet;
+generateDial({
+  min: 0,
+  max: 1,
+  val: distLevels.distWet,
+  id: 'distWet',
+  state: distLevels,
+  target: distortion.wet,
+  key: 'value',
 });

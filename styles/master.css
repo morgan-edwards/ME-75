@@ -1,3 +1,5 @@
+/* font-family: 'Anton', sans-serif;
+font-family: 'Cabin', sans-serif; */
 main {
   display: flex;
   justify-content: center;
@@ -6,19 +8,58 @@ main {
   padding-top: 50px;
 }
 
+h2 {
+  font-family: 'Cabin', sans-serif;
+  font-size: 18px;
+  text-align: center;
+  margin: 10px auto 7px auto;
+}
+
+h3 {
+  font-family: 'Cabin', sans-serif;
+  font-size: 16px;
+  text-align: center;
+  margin: 5px auto 5px auto;
+}
+
 .synth-container {
+  display: flex;
+  flex-direction: column;
   color: white;
   background-color: black;
   padding: 20px;
   width: 600px;
-  display: flex;
   justify-content: center;
+}
+
+.synth-header {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.title {
+  background-color: black;
+  position: absolute;
+  font-family: 'Anton', sans-serif;
+  font-size: 50px;
+  text-align: center;
+  height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 20px;
+}
+
+.vol-osc {
+  margin-bottom: 20px;
 }
 
 .audio-rack {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  align-items: flex-start;
+  justify-content: space-around;
   padding: 10px 0;
 }
 
@@ -27,4 +68,37 @@ main {
   align-items: center;
   justify-content: space-between;
   margin: 0 20px;
+}
+
+.rack-element {
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.rack-knob {
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 10px;
+}
+
+.wave-selector {
+  position: relative;
+}
+
+.radio-labels {
+  position: absolute;
+  transform: rotate(90deg);
+  top: 31px;
+  right: 20px;
+}
+
+.radion-labels, li {
+  font-family: 'Cabin', sans-serif;
+  font-size: 14px;
+  padding: 8px 0;
+  transform: rotate(-20deg);
 }

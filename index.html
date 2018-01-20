@@ -6,9 +6,23 @@
     <script src="./scripts/NexusUI.js"></script>
     <link rel="stylesheet" href="./styles/reset.css" />
     <link rel="stylesheet" href="./styles/master.css" />
+    <link href="https://fonts.googleapis.com/css?family=Anton|Cabin" rel="stylesheet">
     <title>ME-75</title>
   </head>
   <body>
+
+
+    <div class="rack-element">
+      <h2></h2>
+      <div class="sub-rack">
+        <div class="rack-knob">
+          dial
+          <h3></h3>
+        </div>
+      </div>
+    </div>
+
+
 
     <header>
       <h1>ME-75</h1>
@@ -21,65 +35,176 @@
       </form>
 
       <div class="transport">
-        <div class="transport-control" id="play-btn" />
+        <div class="transport-control" id="play-btn"></div>
       </div>
 
-      <div id="voice-1" class="synth-container">
+      <div class="synth-container">
 
-        <section class="wave-selector audio-rack">
-          <div nexus-ui="oscilloscope" id="oscilloscope" class="oscilloscope"></div>
-          <div>
-            <div nexus-ui="radiobutton" id="waveForm" class="wave-selector"></div>
-            <div nexus-ui="dial" value="-27" id="volume" class="volume knob"></div>
+        <div class="synth-header">
+          <div class="title">
+            <h1 class="synth-name">ME-75</h1>
+          </div>
+          <div id="oscilloscope" class="oscilloscope"></div>
+        </div>
+
+        <section class="audio-rack vol-osc">
+          <div class="rack-element">
+            <h2>VOLUME</h2>
+            <div id="volume" class="volume knob"></div>
+          </div>
+          <div class="rack-element wave-selector">
+            <h2>OSCILLATOR</h2>
+            <div id="waveform" class="wave-selector"></div>
+            <ul class="radio-labels">
+              <li>sawtooth</li>
+              <li>triangle</li>
+              <li>square</li>
+              <li>sine</li>
+            </ul>
           </div>
         </section>
 
         <section class="audio-rack">
-          <div class="eq sub-rack">
-            <div nexus-ui="dial" id="lowLevelEq" class="eq knob"></div>
-            <div nexus-ui="dial" id="midLevelEq" class="eq knob"></div>
-            <div nexus-ui="dial" id="highLevelEq" class="eq knob"></div>
+
+          <div class="rack-element">
+            <h2>EQUALIZER</h2>
+            <div class="eq sub-rack">
+              <div class="rack-knob">
+                <div id="lowLevelEq" class="eq knob"></div>
+                <h3>low</h3>
+              </div>
+              <div class="rack-knob">
+                <div id="midLevelEq" class="eq knob"></div>
+                <h3>mid</h3>
+              </div>
+              <div class="rack-knob">
+                <div id="highLevelEq" class="eq knob"></div>
+                <h3>high</h3>
+              </div>
+            </div>
           </div>
-          <div class="compressor sub-rack">
-            <div nexus-ui="dial" id="threshold" class="compressor knob"></div>
-            <div nexus-ui="dial" id="ratio" class="compressor knob"></div>
+
+          <div class="rack-element">
+            <h2>COMPRESSOR</h2>
+            <div class="compressor sub-rack">
+              <div class="rack-knob">
+                <div id="threshold" class="compressor knob"></div>
+                <h3>threshold</h3>
+              </div>
+              <div class="rack-knob">
+                <div id="ratio" class="compressor knob"></div>
+                <h3>ratio</h3>
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+        <section class="audio-rack">
+
+          <div class="rack-element">
+            <h2>FILTERS</h2>
+            <div class="sub-rack">
+              <div class="rack-knob">
+                <div id="lowpass" class="filter knob"></div>
+                <h3>lowpass</h3>
+              </div>
+              <div class="rack-knob">
+                <div id="highpass" class="filter knob"></div>
+                <h3>highpass</h3>
+              </div>
+            </div>
+          </div>
+
+          <div class="rack-element">
+            <h2>TIMING</h2>
+            <div class="sub-rack">
+              <div class="rack-knob">
+                <div id="attack" class="att-del knob"></div>
+                <h3>attack</h3>
+              </div>
+              <div class="rack-knob">
+                <div id="release" class="att-del knob"></div>
+                <h3>release</h3>
+              </div>
+            </div>
           </div>
         </section>
 
         <section class="audio-rack">
-          <div class="filters sub-rack">
-            <div nexus-ui="dial" id="lowpass" class="filter knob"></div>
-            <div nexus-ui="dial" id="highpass" class="filter knob"></div>
+
+          <div class="rack-element">
+            <h2>CHORUS</h2>
+            <div class="sub-rack">
+              <div class="rack-knob">
+                <div id="chorusFreq" class="filter knob"></div>
+                <h3>frequency</h3>
+              </div>
+              <div class="rack-knob">
+                <div id="chorusDel" class="filter knob"></div>
+                <h3>delay</h3>
+              </div>
+              <div class="rack-knob">
+                <div id="chorusDep" class="filter knob"></div>
+                <h3>depth</h3>
+              </div>
+            </div>
           </div>
-          <div class="attack-release sub-rack">
-            <div nexus-ui="dial" id="attack" class="att-del knob"></div>
-            <div nexus-ui="dial" id="release" class="att-del knob"></div>
+
+
+          <div class="rack-element">
+            <h2>DELAY</h2>
+            <div class="sub-rack">
+              <div class="rack-knob">
+                <div id="delayTime" class="filter knob"></div>
+                <h3>time</h3>
+              </div>
+              <div class="rack-knob">
+                <div id="delayFeedback" class="filter knob"></div>
+                <h3>feeback</h3>
+              </div>
+              <div class="rack-knob">
+                <div id="delayWet" class="filter knob"></div>
+                <h3>mix</h3>
+              </div>
+            </div>
           </div>
+
         </section>
 
         <section class="audio-rack">
-          <div class="chorus sub-rack">
-            <div nexus-ui="dial" id="chorusFreq" class="filter knob"></div>
-            <div nexus-ui="dial" id="chorusDel" class="filter knob"></div>
-            <div nexus-ui="dial" id="chorusDep" class="filter knob"></div>
+
+          <div class="rack-element">
+            <h2>REVERB</h2>
+            <div class="sub-rack">
+              <div class="rack-knob">
+                <div id="roomSize" class="filter knob"></div>
+                <h3>room size</h3>
+              </div>
+              <div class="rack-knob">
+                <div id="revWet" class="filter knob"></div>
+                <h3>mix</h3>
+              </div>
+            </div>
           </div>
-          <div class="delay sub-rack">
-            <div nexus-ui="dial" id="delayTime" class="filter knob"></div>
-            <div nexus-ui="dial" id="delayFeedback" class="filter knob"></div>
-            <div nexus-ui="dial" id="delayWet" class="filter knob"></div>
+
+          <div class="rack-element">
+            <h2>DISTORTION</h2>
+            <div class="sub-rack">
+              <div class="rack-knob">
+                <div id="dist" class="filter knob"></div>
+                <h3>distortion</h3>
+              </div>
+              <div class="rack-knob">
+                <div id="distWet" class="filter knob"></div>
+                <h3>mix</h3>
+              </div>
+            </div>
           </div>
+          
         </section>
 
-        <section class="audio-rack">
-          <div class="reverb sub-rack">
-            <div nexus-ui="dial" id="reverb" class="filter knob"></div>
-            <div nexus-ui="dial" id="revWet" class="filter knob"></div>
-          </div>
-          <div class="distortion sub-rack">
-            <div nexus-ui="dial" id="dist" class="filter knob"></div>
-            <div nexus-ui="dial" id="distWet" class="filter knob"></div>
-          </div>
-        </section>
+      </div>
     </main>
 
     <footer>
