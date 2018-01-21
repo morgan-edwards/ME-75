@@ -19,7 +19,7 @@ header {
 }
 
 .instructions {
-  width: 450px;
+  width: 477px;
   text-align: center;
   margin-bottom: 25px;
   color: #979999;
@@ -110,6 +110,7 @@ h3 {
 }
 
 .synth-container {
+  position: relative;
   display: flex;
   flex-direction: column;
   color: white;
@@ -196,7 +197,7 @@ h3 {
   right: 110px;
 }
 
-li {
+.radio-labels li {
   font-family: 'Cabin', sans-serif;
   font-size: 14px;
   padding: 8px 0;
@@ -208,4 +209,37 @@ li {
   align-items: flex-start;
   justify-content: space-around;
   height: 150px;
+}
+
+.octave-note {
+  position: absolute;
+  margin: 0 auto;
+  text-align: center;
+  width: 100%;
+  bottom: 10px;
+}
+
+footer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 150px;
+}
+
+.social-links {
+  justify-content: space-around;
+  font-size: 24px;
+  display: flex;
+  margin-bottom: 20px;
+  width: 500px;
+}
+
+.social-links li:hover {
+  color: #03e0d1;
+}
+
+.copyright {
+  font-size: 16px;
+  color: #979999;
 }

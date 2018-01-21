@@ -24309,6 +24309,8 @@ exports.keyboardState = undefined;
 
 var _gui = __webpack_require__(0);
 
+var _input_controller = __webpack_require__(5);
+
 var keyboardState = exports.keyboardState = { key: null, octave: 4, active: false };
 var playKey = function playKey(pitch, octave, e) {
   _gui.synth.triggerAttack('' + pitch + octave);
@@ -24378,16 +24380,35 @@ document.addEventListener('keydown', function (e) {
         break;
       case '-':
         lowerOctave();
+        (0, _input_controller.updateOctave)();
         break;
       case '=':
         raiseOctave();
+        (0, _input_controller.updateOctave)();
         break;
       case '+':
         raiseOctave();
+        (0, _input_controller.updateOctave)();
         break;
       default:
         return null;
     }
+  }
+  switch (e.key) {
+    case '-':
+      lowerOctave();
+      (0, _input_controller.updateOctave)();
+      break;
+    case '=':
+      raiseOctave();
+      (0, _input_controller.updateOctave)();
+      break;
+    case '+':
+      raiseOctave();
+      (0, _input_controller.updateOctave)();
+      break;
+    default:
+      return null;
   }
 });
 
@@ -24403,6 +24424,11 @@ document.addEventListener('keyup', function (e) {
 
 "use strict";
 
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.updateOctave = undefined;
 
 var _tone = __webpack_require__(1);
 
@@ -24429,10 +24455,17 @@ var setMarquee = function setMarquee(name) {
 var togglePlay = function togglePlay() {
   if (!_gui.playState.playing) _gui.play.click();
 };
+
+var updateOctave = exports.updateOctave = function updateOctave() {
+  _gui.playState.sequence.cancel();
+  user.updateSong();
+  (0, _gui.newSequence)(user.song);
+  togglePlay();
+};
+
 var updateMelody = function updateMelody(e) {
   e.preventDefault();
   _gui.playState.sequence.cancel();
-  _tone2.default.Transport.stop();
   user.setName(e.currentTarget.name.value);
   user.setBday(e.currentTarget.birthday.value);
   user.updateSong();

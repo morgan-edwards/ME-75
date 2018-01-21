@@ -1,4 +1,5 @@
 import { synth } from './gui';
+import { updateOctave } from './input_controller';
 
 export const keyboardState = { key: null, octave: 4, active: false };
 const playKey = (pitch, octave, e) => {
@@ -69,16 +70,35 @@ document.addEventListener('keydown',(e) =>{
         break;
       case '-':
         lowerOctave();
+        updateOctave();
         break;
       case '=':
         raiseOctave();
+        updateOctave();
         break;
       case '+':
         raiseOctave();
+        updateOctave();
         break;
       default:
       return null;
     }
+  }
+  switch (e.key) {
+    case '-':
+      lowerOctave();
+      updateOctave();
+      break;
+    case '=':
+      raiseOctave();
+      updateOctave();
+      break;
+    case '+':
+      raiseOctave();
+      updateOctave();
+      break;
+    default:
+      return null;
   }
 });
 

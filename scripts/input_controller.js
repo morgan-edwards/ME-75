@@ -15,10 +15,17 @@ const setMarquee = (name) => {
 const togglePlay = () => {
   if (!playState.playing) play.click();
 };
+
+export const updateOctave = () => {
+  playState.sequence.cancel();
+  user.updateSong();
+  newSequence(user.song);
+  togglePlay();
+};
+
 const updateMelody = (e) => {
   e.preventDefault();
   playState.sequence.cancel();
-  Tone.Transport.stop();
   user.setName(e.currentTarget.name.value);
   user.setBday(e.currentTarget.birthday.value);
   user.updateSong();
