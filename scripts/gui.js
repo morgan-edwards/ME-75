@@ -125,7 +125,7 @@ const generateDial = dialObj => {
 // Builds and styles voice 1
 
 //Transport Controls
-const play = new Nexus.Button('#play-btn', {
+export const play = new Nexus.Button('#play-btn', {
   'mode': 'toggle',
   'size': [50,50],
 });

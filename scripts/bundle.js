@@ -73,7 +73,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.newSequence = exports.synth = exports.playState = undefined;
+exports.play = exports.newSequence = exports.synth = exports.playState = undefined;
 
 var _tone = __webpack_require__(1);
 
@@ -199,7 +199,7 @@ var generateDial = function generateDial(dialObj) {
 // Builds and styles voice 1
 
 //Transport Controls
-var play = new Nexus.Button('#play-btn', {
+var play = exports.play = new Nexus.Button('#play-btn', {
   'mode': 'toggle',
   'size': [50, 50]
 });
@@ -24426,15 +24426,19 @@ var setMarquee = function setMarquee(name) {
     marquee.innerHTML = 'Now Playing&nbsp;:&nbsp;&nbsp;' + name;
   }
 };
+var togglePlay = function togglePlay() {
+  if (!_gui.playState.playing) _gui.play.click();
+};
 var updateMelody = function updateMelody(e) {
   e.preventDefault();
   _gui.playState.sequence.cancel();
+  _tone2.default.Transport.stop();
   user.setName(e.currentTarget.name.value);
   user.setBday(e.currentTarget.birthday.value);
   user.updateSong();
-  _tone2.default.Transport.stop();
   (0, _gui.newSequence)(user.song);
   setMarquee(e.currentTarget.name.value);
+  togglePlay();
 };
 
 userForm.addEventListener('submit', updateMelody);
