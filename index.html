@@ -6,24 +6,29 @@
     <script src="./scripts/NexusUI.js"></script>
     <link rel="stylesheet" href="./styles/reset.css" />
     <link rel="stylesheet" href="./styles/master.css" />
-    <link href="https://fonts.googleapis.com/css?family=Anton|Cabin" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Anton|Cabin|Shrikhand" rel="stylesheet">
     <title>ME-75</title>
   </head>
   <body>
 
     <header>
-      <h1>ME-75</h1>
+      <h1>Play My Name</h1>
+      <p class="instructions">Enter your name and birthday below to generate a
+      melody that is unique to you. The instrument is also playable by keyboard
+      while your mouse is inside of it. Have fun!</p>
     </header>
 
     <main>
       <form id="user-info" class="user-input">
-        <div class="name-input">
-          <input id="name" type="text" placeholder="Enter your name" />
+        <div class="inputs">
+          <div class="name-input">
+            <input id="name" type="text" placeholder="Enter your name" />
+          </div>
+          <div class="date-input">
+            <input id="birthday" type="date" />
+          </div>
         </div>
-        <div class="date-input">
-          <input id="birthday" type="date" placeholder="Enter your name" />
-        </div>
-        <button class="create-melody">Play my name!</button>
+        <button class="create-melody">Generate Melody</button>
       </form>
 
       <div id="synth" class="synth-container">
@@ -33,8 +38,15 @@
             <h2>PLAY</h2>
             <div class="transport-control" id="play-btn"></div>
           </div>
-          <div id="oscilloscope" class="oscilloscope"></div>
-          <div class="rack-element header-knob">
+
+          <div class="oscilloscope-container">
+            <div class="oscilloscope-overlay">
+              <marquee id="now-playing">Enter your information and press play to hear your melody</marquee>
+            </div>
+            <div id="oscilloscope" class="oscilloscope"></div>
+          </div>
+
+          <div class="rack-element header-knob vol-bpm">
             <h2>MAIN</h2>
             <div class="eq sub-rack">
               <div class="rack-knob">

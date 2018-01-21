@@ -1,11 +1,41 @@
 /* font-family: 'Anton', sans-serif;
 font-family: 'Cabin', sans-serif; */
+/*
+Color Scheme
+red: #ff0084
+blue: #03e0d1
+yellow: #ffbb00 */
+
+body {
+  font-family: 'Cabin', sans-serif;
+  font-size: 18px;
+}
+
+header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.instructions {
+  width: 450px;
+  text-align: center;
+  margin-bottom: 25px;
+  color: #979999;
+}
+
+h1 {
+  font-size: 85px;
+  font-family: 'Shrikhand', sans-serif;
+  filter: drop-shadow( -3px 3px #ffbb00);
+}
+
 main {
   display: flex;
   justify-content: center;
   flex-direction: column;
   align-items: center;
-  padding-top: 50px;
 }
 
 h2 {
@@ -22,6 +52,63 @@ h3 {
   margin: 5px auto 5px auto;
 }
 
+.user-input {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 0 30px 0;
+}
+
+.inputs {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.user-input input {
+  font-size: 16px;
+  font-family: 'Cabin', sans-serif;
+  height: 20px;
+  border: 2px solid black;
+  border-radius: 10px;
+  padding: 10px;
+  margin: 20px 0;
+}
+
+.user-input input:focus {
+  border: 2px solid #03e0d1;
+}
+
+#birthday {
+  width: 150px;
+  margin-left: 20px;
+}
+
+#name {
+  width: 300px;
+}
+
+.user-input button {
+  border: 2px solid black;
+  font-size: 20px;
+  font-family: 'Cabin', sans-serif;
+  height: 30px;
+  background-color: #ffbb00;
+  border-radius: 10px;
+  text-align: center;
+  padding: 10px 0;
+  letter-spacing: 2px;
+  width: 100%;
+}
+
+.user-input button:hover {
+  background-color: #03e0d1;
+}
+
+.user-input button:active {
+  background-color: #ff0084;
+}
+
 .synth-container {
   display: flex;
   flex-direction: column;
@@ -31,6 +118,23 @@ h3 {
   width: 900px;
   justify-content: center;
   border-radius: 20px;
+}
+
+.oscilloscope-container {
+  position: relative;
+}
+
+.oscilloscope-overlay {
+  font-size: 14px;
+  font-family: 'Cabin', sans-serif;
+  position: absolute;
+  width: 350px;
+  height: 150px;
+  background-color: none;
+}
+
+.vol-bpm {
+  padding-top: 20px;
 }
 
 .synth-header {

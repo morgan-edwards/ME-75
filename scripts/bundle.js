@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 2);
+/******/ 	return __webpack_require__(__webpack_require__.s = 3);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -79,7 +79,7 @@ var _tone = __webpack_require__(1);
 
 var _tone2 = _interopRequireDefault(_tone);
 
-var _transcribers = __webpack_require__(3);
+var _transcribers = __webpack_require__(2);
 
 var Transcribe = _interopRequireWildcard(_transcribers);
 
@@ -97,10 +97,10 @@ var waveTypes = {
   2: 'triangle',
   3: 'sawtooth'
 };
-var playState = exports.playState = { playing: false, wave: 'sine', music: ["c4", "f5"], sequence: null };
+var playState = exports.playState = { playing: false, wave: 'sine', sequence: null };
 var bpmLevels = { bpm: 170, min: 20, max: 320 };
 var synthSettings = { attack: 0.25, release: 0.25 };
-var volumeLevels = { volume: -10, high: 10, low: -30 };
+var volumeLevels = { volume: -5, high: 20, low: -30 };
 var compressorLevels = { threshold: -24, ratio: 12 };
 var eqLevels = {
   lowLevelEq: volumeLevels.volume,
@@ -149,11 +149,11 @@ var newSequence = exports.newSequence = function newSequence(pattern) {
   sequence.humanize = "32n";
   sequence.loop = true;
   sequence.start(0);
+  playState.sequence = sequence;
   return sequence;
 };
 
-var initSequence = newSequence(playState.music);
-playState.sequence = initSequence;
+newSequence([]);
 
 //Transport callbacks
 var updateTransport = function updateTransport() {
@@ -167,11 +167,11 @@ var updateTransport = function updateTransport() {
 //Control building helper functions
 var colorize = function colorize(component) {
   component.colorize("fill", "#ffffff");
-  component.colorize("accent", "#ff0037");
-  component.colorize("dark", "#ff0037");
-  component.colorize("light", "#ff0037");
-  component.colorize("mediumLight", "#ff0037");
-  component.colorize("mediumDark", "#ff0037");
+  component.colorize("accent", "#ff0084");
+  component.colorize("dark", "#ff0084");
+  component.colorize("light", "#ff0084");
+  component.colorize("mediumLight", "#ff0084");
+  component.colorize("mediumDark", "#ff0084");
 };
 
 var createDial = function createDial(min, max, val, id) {
@@ -24171,22 +24171,13 @@ var __WEBPACK_AMD_DEFINE_RESULT__;(function(root, factory){
 "use strict";
 
 
-__webpack_require__(0);
-
-__webpack_require__(7);
-
-__webpack_require__(9);
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.nameBdayToSong = undefined;
+
+var _keyboard = __webpack_require__(4);
+
 var nameToNumerals = function nameToNumerals(string) {
   if (string.length === 0) {
     return null;
@@ -24230,7 +24221,7 @@ var nameToMelody = function nameToMelody(name, mode) {
   var numArray = nameToNumerals(name);
   var key = nameToKey(name, mode);
   var melody = numArray.map(function (num) {
-    return key[num] + '4';
+    return key[num] + _keyboard.keyboardState.octave;
   });
   return melody;
 };
@@ -24292,72 +24283,107 @@ var nameBdayToSong = exports.nameBdayToSong = function nameBdayToSong(name, bday
 };
 
 /***/ }),
-/* 4 */,
-/* 5 */,
-/* 6 */,
-/* 7 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
+__webpack_require__(0);
+
+__webpack_require__(4);
+
+__webpack_require__(5);
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.keyboardState = undefined;
+
 var _gui = __webpack_require__(0);
 
-var currentState = { key: null, octave: 4, active: false };
+var keyboardState = exports.keyboardState = { key: null, octave: 4, active: false };
 var playKey = function playKey(pitch, octave, e) {
   _gui.synth.triggerAttack('' + pitch + octave);
-  currentState.key = e.key;
+  keyboardState.key = e.key;
+};
+var raiseOctave = function raiseOctave() {
+  if (keyboardState.octave < 8) {
+    keyboardState.octave = keyboardState.octave + 1;
+  }
+};
+
+var lowerOctave = function lowerOctave() {
+  if (keyboardState.octave > 0) {
+    keyboardState.octave = keyboardState.octave - 1;
+  }
 };
 
 var synthContainer = document.getElementById('synth');
 synthContainer.addEventListener('mouseenter', function () {
-  currentState.active = true;
+  keyboardState.active = true;
 });
 synthContainer.addEventListener('mouseleave', function () {
-  currentState.active = false;
+  keyboardState.active = false;
 });
 
 document.addEventListener('keydown', function (e) {
-  if (currentState.active) {
+  if (keyboardState.active) {
     switch (e.key) {
       case 's':
-        playKey('C', currentState.octave, e);
+        playKey('C', keyboardState.octave, e);
         break;
       case 'e':
-        playKey('C#', currentState.octave, e);
+        playKey('C#', keyboardState.octave, e);
         break;
       case 'd':
-        playKey('D', currentState.octave, e);
+        playKey('D', keyboardState.octave, e);
         break;
       case 'r':
-        playKey('D#', currentState.octave, e);
+        playKey('D#', keyboardState.octave, e);
         break;
       case 'f':
-        playKey('E', currentState.octave, e);
+        playKey('E', keyboardState.octave, e);
         break;
       case 'g':
-        playKey('F', currentState.octave, e);
+        playKey('F', keyboardState.octave, e);
         break;
       case 'y':
-        playKey('F#', currentState.octave, e);
+        playKey('F#', keyboardState.octave, e);
         break;
       case 'h':
-        playKey('G', currentState.octave, e);
+        playKey('G', keyboardState.octave, e);
         break;
       case 'u':
-        playKey('G#', currentState.octave, e);
+        playKey('G#', keyboardState.octave, e);
         break;
       case 'j':
-        playKey('A', currentState.octave, e);
+        playKey('A', keyboardState.octave, e);
         break;
       case 'i':
-        playKey('A#', currentState.octave, e);
+        playKey('A#', keyboardState.octave, e);
         break;
       case 'k':
-        playKey('B', currentState.octave, e);
+        playKey('B', keyboardState.octave, e);
         break;
       case 'l':
-        playKey('C', currentState.octave + 1, e);
+        playKey('C', keyboardState.octave + 1, e);
+        break;
+      case '-':
+        lowerOctave();
+        break;
+      case '=':
+        raiseOctave();
+        break;
+      case '+':
+        raiseOctave();
         break;
       default:
         return null;
@@ -24366,14 +24392,13 @@ document.addEventListener('keydown', function (e) {
 });
 
 document.addEventListener('keyup', function (e) {
-  if (currentState.key === e.key) {
+  if (keyboardState.key === e.key) {
     _gui.synth.triggerRelease();
   }
 });
 
 /***/ }),
-/* 8 */,
-/* 9 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24383,7 +24408,7 @@ var _tone = __webpack_require__(1);
 
 var _tone2 = _interopRequireDefault(_tone);
 
-var _user = __webpack_require__(10);
+var _user = __webpack_require__(6);
 
 var _user2 = _interopRequireDefault(_user);
 
@@ -24392,22 +24417,30 @@ var _gui = __webpack_require__(0);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var user = new _user2.default();
-
 var userForm = document.getElementById('user-info');
-
-userForm.addEventListener('submit', function (e) {
+var marquee = document.getElementById('now-playing');
+var setMarquee = function setMarquee(name) {
+  if (name === '') {
+    marquee.innerHTML = 'Enter your information and press play to hear your melody';
+  } else {
+    marquee.innerHTML = 'Now Playing&nbsp;:&nbsp;&nbsp;' + name;
+  }
+};
+var updateMelody = function updateMelody(e) {
   e.preventDefault();
+  _gui.playState.sequence.cancel();
   user.setName(e.currentTarget.name.value);
   user.setBday(e.currentTarget.birthday.value);
   user.updateSong();
-  console.log(user.song);
-  _gui.playState.sequence.cancel();
-  _gui.playState.music = user.song;
-  (0, _gui.newSequence)(_gui.playState.music);
-});
+  _tone2.default.Transport.stop();
+  (0, _gui.newSequence)(user.song);
+  setMarquee(e.currentTarget.name.value);
+};
+
+userForm.addEventListener('submit', updateMelody);
 
 /***/ }),
-/* 10 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24419,7 +24452,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _transcribers = __webpack_require__(3);
+var _transcribers = __webpack_require__(2);
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 

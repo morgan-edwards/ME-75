@@ -11,10 +11,10 @@ const waveTypes = {
    2: 'triangle',
    3: 'sawtooth'
  };
-export const playState = { playing: false, wave: 'sine', music: ["c4", "f5"], sequence: null };
+export const playState = { playing: false, wave: 'sine', sequence: null };
 const bpmLevels = { bpm: 170, min: 20, max: 320 };
 const synthSettings ={ attack: 0.25, release: 0.25 };
-const volumeLevels = { volume: -10, high: 10, low: -30, };
+const volumeLevels = { volume: -5, high: 20, low: -30, };
 const compressorLevels = { threshold: -24, ratio: 12, };
 const eqLevels = {
   lowLevelEq: volumeLevels.volume,
@@ -73,11 +73,11 @@ export const newSequence = (pattern) => {
   sequence.humanize = "32n";
   sequence.loop = true;
   sequence.start(0);
+  playState.sequence = sequence;
   return sequence;
 };
 
-let initSequence = newSequence(playState.music);
-playState.sequence = initSequence
+newSequence([]);
 
 
 //Transport callbacks
@@ -93,11 +93,11 @@ const updateTransport = () => {
 //Control building helper functions
 const colorize = (component) => {
   component.colorize("fill", "#ffffff");
-  component.colorize("accent", "#ff0037");
-  component.colorize("dark", "#ff0037");
-  component.colorize("light", "#ff0037");
-  component.colorize("mediumLight", "#ff0037");
-  component.colorize("mediumDark", "#ff0037");
+  component.colorize("accent", "#ff0084");
+  component.colorize("dark", "#ff0084");
+  component.colorize("light", "#ff0084");
+  component.colorize("mediumLight", "#ff0084");
+  component.colorize("mediumDark", "#ff0084");
 };
 
 const createDial = (min, max, val, id) => {

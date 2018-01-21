@@ -1,3 +1,5 @@
+import { keyboardState } from './keyboard';
+
 const nameToNumerals = (string) => {
   if (string.length === 0 ) {
     return null;
@@ -39,7 +41,7 @@ const nameToKey = (string, mode) => {
 const nameToMelody = (name, mode) => {
   const numArray = nameToNumerals(name);
   const key = nameToKey(name, mode);
-  const melody = numArray.map(num => key[num]+'4');
+  const melody = numArray.map(num => key[num]+ keyboardState.octave);
   return melody;
 };
 
