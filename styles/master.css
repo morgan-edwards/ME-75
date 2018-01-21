@@ -30,6 +30,7 @@ h3 {
   padding: 20px 0;
   width: 900px;
   justify-content: center;
+  border-radius: 20px;
 }
 
 .synth-header {

@@ -99,6 +99,7 @@ var waveTypes = {
   3: 'sawtooth'
 };
 var playState = { playing: false, wave: 'sine' };
+var bpmLevels = { bpm: 170, min: 20, max: 320 };
 var synthSettings = { attack: 0.25, release: 0.25 };
 var volumeLevels = { volume: -10, high: 10, low: -30 };
 var compressorLevels = { threshold: -24, ratio: 12 };
@@ -130,6 +131,7 @@ var distortion = new _tone2.default.Distortion(distLevels.dist);
 //Sets defaults
 distortion.wet.value = distLevels.distWet;
 reverb.wet.value = reverbLevels.revWet;
+_tone2.default.Transport.bpm.value = bpmLevels.bpm;
 
 //Synth Setup
 var synth = exports.synth = new _tone2.default.AMSynth();
@@ -142,7 +144,7 @@ synth.chain(compressor, chorus, delay, distortion, reverb, lowpassFilter, highpa
 // TEST AUDIO
 var pattern = new _tone2.default.Sequence(function (time, note) {
   synth.triggerAttackRelease(note, "8n");
-}, ['F#4', [null, 'D#4', 'E4'], 'B4', [null, 'B4', 'G#4', 'B4'], ['G#4', 'C#4'], 'F#4', 'D#4', [null, 'E4', 'B4']], "4n").start(0);
+}, ['D4', [null, 'A4', 'G4'], 'A#4', [null, 'F4', 'F4'], 'G4', [null, 'C4'], [null, 'E4'], 'D4'], "4n").start(0);
 
 pattern.loop = true;
 pattern.start(0);
@@ -227,6 +229,17 @@ generateDial({
   id: 'volume',
   state: volumeLevels,
   target: synth.volume,
+  key: 'value'
+});
+
+// BPM
+generateDial({
+  min: bpmLevels.min,
+  max: bpmLevels.max,
+  val: bpmLevels.bpm,
+  id: 'bpm',
+  state: bpmLevels,
+  target: _tone2.default.Transport.bpm,
   key: 'value'
 });
 
