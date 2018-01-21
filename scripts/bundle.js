@@ -140,10 +140,9 @@ synth.envelope.release = synthSettings.release;
 synth.chain(compressor, chorus, delay, distortion, reverb, lowpassFilter, highpassFilter, eq3, _tone2.default.Master);
 
 // TEST AUDIO
-var pattern = new _tone2.default.Part(function (time, value) {
-  //the value is an object which contains both the note and the velocity
-  synth.triggerAttackRelease(value.note, value.dur, time, value.velocity);
-}, [{ "time": 0, "note": "C3", "velocity": 0.9, "dur": "8n" }, { "time": "0:2", "note": "G4", "velocity": 0.5, "dur": "4n" }]).start(0);
+var pattern = new _tone2.default.Sequence(function (time, note) {
+  synth.triggerAttackRelease(note, "8n");
+}, ['F#4', [null, 'D#4', 'E4'], 'B4', [null, 'B4', 'G#4', 'B4'], ['G#4', 'C#4'], 'F#4', 'D#4', [null, 'E4', 'B4']], "4n").start(0);
 
 pattern.loop = true;
 pattern.start(0);
@@ -24176,10 +24175,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 "use strict";
 
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-var nameToPitches = exports.nameToPitches = function nameToPitches(string) {
+var nameToNumerals = function nameToNumerals(string) {
   string = string.toLowerCase();
   var base35 = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
   var stringVals = string.split('').reduce(function (acc, ch) {
@@ -24201,11 +24197,11 @@ var nameToPitches = exports.nameToPitches = function nameToPitches(string) {
   return base7;
 };
 
-var nameToKey = exports.nameToKey = function nameToKey(string, mode) {
+var nameToKey = function nameToKey(string, mode) {
   var pitches = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
   var tonic = Math.floor((string[0].charCodeAt() - 96) / 2);
   if (tonic > 12) tonic = 1;
-  var steps = mode === 'major' ? [2, 2, 1, 2, 2, 2] : [2, 1, 2, 2, 1, 2];
+  var steps = mode === 'minor' ? [2, 1, 2, 2, 1, 2] : [2, 2, 1, 2, 2, 2];
   var key = [pitches[tonic]];
 
   steps.forEach(function (step) {
@@ -24215,13 +24211,69 @@ var nameToKey = exports.nameToKey = function nameToKey(string, mode) {
   return key;
 };
 
-var nameToMelody = exports.nameToMelody = function nameToMelody(name, mode) {
-  var numArray = nameToPitches(name);
+var nameToMelody = function nameToMelody(name, mode) {
+  var numArray = nameToNumerals(name);
   var key = nameToKey(name, mode);
   var melody = numArray.map(function (num) {
-    return key[num] + '2';
+    return key[num] + '4';
   });
   return melody;
+};
+
+var pitches = ["C", "B", "A", "G"];
+
+var numToSubdivision = function numToSubdivision(digit) {
+  var subdivision = { count: 0, pitches: [] };
+  var subCount = void 0;
+  if (digit === 0) {
+    subCount = 1;
+  } else if (digit < 5) {
+    subCount = digit;
+  } else if (digit > 4) {
+    subdivision.pitches.push(null);
+    subCount = digit % 4;
+  }
+  subdivision.count = subCount;
+  return subdivision;
+};
+
+var birthdayToBeats = function birthdayToBeats(numString) {
+  var pattern = [];
+  var i = void 0;
+  for (i = 0; i < 8; i++) {
+    pattern.push(numToSubdivision(parseInt(numString[i])));
+  }
+  return pattern;
+};
+
+var fillBeats = function fillBeats(pitches, beats) {
+  var currentIdx = 0;
+  beats.forEach(function (beat) {
+    var i = void 0;
+    for (i = 0; i < beat.count; i++) {
+      currentIdx = currentIdx > pitches.length - 1 ? 0 : currentIdx;
+      beat.pitches.push(pitches[currentIdx]);
+      currentIdx++;
+    }
+  });
+  return beats;
+};
+
+var beatsToMelody = function beatsToMelody(beats) {
+  var mapped = beats.map(function (beat) {
+    if (beat.pitches.length === 1) {
+      return beat.pitches[0];
+    } else {
+      return beat.pitches;
+    }
+  });
+  return mapped;
+};
+
+var nameBdayToSong = function nameBdayToSong(name, bday, mode) {
+  var pitches = nameToMelody(name, mode);
+  var beats = birthdayToBeats(bday);
+  return beatsToMelody(fillBeats(pitches, beats));
 };
 
 /***/ }),

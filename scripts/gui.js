@@ -64,12 +64,16 @@ synth.chain(
 );
 
 // TEST AUDIO
-var pattern = new Tone.Part(function(time, value){
-	//the value is an object which contains both the note and the velocity
-	synth.triggerAttackRelease(value.note, value.dur, time, value.velocity);
-}, [{"time" : 0, "note" : "C3", "velocity": 0.9, "dur":"8n", },
-    {"time" : "0:2", "note" : "G4", "velocity": 0.5, "dur":"4n", }
-]).start(0);
+var pattern = new Tone.Sequence(function(time, note){
+	synth.triggerAttackRelease(note, "8n");
+}, [ 'F#4',
+  [ null, 'D#4', 'E4' ],
+  'B4',
+  [ null, 'B4', 'G#4', 'B4' ],
+  [ 'G#4', 'C#4' ],
+  'F#4',
+  'D#4',
+  [ null, 'E4', 'B4' ]], "4n").start(0);
 
 pattern.loop = true;
 pattern.start(0);
