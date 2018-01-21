@@ -1,60 +1,69 @@
 import { synth } from './gui';
 
-const currentPitch = { key: null, octave: 4 };
-
+const currentState = { key: null, octave: 4, active: false };
 const playKey = (pitch, octave, e) => {
   synth.triggerAttack(`${pitch}${octave}`);
-  currentPitch.key = e.key;
+  currentState.key = e.key;
 };
 
+const synthContainer = document.getElementById('synth');
+synthContainer.addEventListener('mouseenter', () => {
+  currentState.active = true;
+});
+synthContainer.addEventListener('mouseleave', () => {
+  currentState.active = false;
+});
+
 document.addEventListener('keydown',(e) =>{
-  switch (e.key) {
-    case 's':
-      playKey('C', currentPitch.octave, e);
+  if (currentState.active) {
+    switch (e.key) {
+      case 's':
+      playKey('C', currentState.octave, e);
       break;
-    case 'e':
-      playKey('C#', currentPitch.octave, e);
+      case 'e':
+      playKey('C#', currentState.octave, e);
       break;
-    case 'd':
-      playKey('D', currentPitch.octave, e);
+      case 'd':
+      playKey('D', currentState.octave, e);
       break;
-    case 'r':
-      playKey('D#', currentPitch.octave, e);
+      case 'r':
+      playKey('D#', currentState.octave, e);
       break;
-    case 'f':
-      playKey('E', currentPitch.octave, e);
+      case 'f':
+      playKey('E', currentState.octave, e);
       break;
-    case 'g':
-      playKey('F', currentPitch.octave, e);
+      case 'g':
+      playKey('F', currentState.octave, e);
       break;
-    case 'y':
-      playKey('F#', currentPitch.octave, e);
+      case 'y':
+      playKey('F#', currentState.octave, e);
       break;
-    case 'h':
-      playKey('G', currentPitch.octave, e);
+      case 'h':
+      playKey('G', currentState.octave, e);
       break;
-    case 'u':
-      playKey('G#', currentPitch.octave, e);
+      case 'u':
+      playKey('G#', currentState.octave, e);
       break;
-    case 'j':
-      playKey('A', currentPitch.octave, e);
+      case 'j':
+      playKey('A', currentState.octave, e);
       break;
-    case 'i':
-      playKey('A#', currentPitch.octave, e);
+      case 'i':
+      playKey('A#', currentState.octave, e);
       break;
-    case 'k':
-      playKey('B', currentPitch.octave, e);
+      case 'k':
+      playKey('B', currentState.octave, e);
       break;
-    case 'l':
-      playKey('C', (currentPitch.octave + 1), e);
+      case 'l':
+      playKey('C', (currentState.octave + 1), e);
       break;
-    default:
+      default:
       return null;
+    }
   }
 });
 
 document.addEventListener('keyup', e => {
-  if (currentPitch.key === e.key) {
+  if (currentState.key === e.key) {
     synth.triggerRelease();
   }
 });
