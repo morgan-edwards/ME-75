@@ -73,7 +73,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.synth = undefined;
+exports.newSequence = exports.synth = exports.playState = undefined;
 
 var _tone = __webpack_require__(1);
 
@@ -91,14 +91,13 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 Nexus.context = _tone2.default.context;
 
 //State
-var patterns = {};
 var waveTypes = {
   0: 'sine',
   1: 'square',
   2: 'triangle',
   3: 'sawtooth'
 };
-var playState = { playing: false, wave: 'sine' };
+var playState = exports.playState = { playing: false, wave: 'sine', music: ["c4", "f5"], sequence: null };
 var bpmLevels = { bpm: 170, min: 20, max: 320 };
 var synthSettings = { attack: 0.25, release: 0.25 };
 var volumeLevels = { volume: -10, high: 10, low: -30 };
@@ -141,13 +140,20 @@ synth.envelope.attack = synthSettings.attack;
 synth.envelope.release = synthSettings.release;
 synth.chain(compressor, chorus, delay, distortion, reverb, lowpassFilter, highpassFilter, eq3, _tone2.default.Master);
 
-// TEST AUDIO
-var pattern = new _tone2.default.Sequence(function (time, note) {
-  synth.triggerAttackRelease(note, "8n");
-}, ['D4', [null, 'A4', 'G4'], 'A#4', [null, 'F4', 'F4'], 'G4', [null, 'C4'], [null, 'E4'], 'D4'], "4n").start(0);
+//AUDIO Initialize
+var newSequence = exports.newSequence = function newSequence(pattern) {
+  console.log('MAKING SEQUENCE: ' + pattern);
+  var sequence = new _tone2.default.Sequence(function (time, note) {
+    synth.triggerAttackRelease(note, "8n");
+  }, pattern, "4n");
+  sequence.humanize = "32n";
+  sequence.loop = true;
+  sequence.start(0);
+  return sequence;
+};
 
-pattern.loop = true;
-pattern.start(0);
+var initSequence = newSequence(playState.music);
+playState.sequence = initSequence;
 
 //Transport callbacks
 var updateTransport = function updateTransport() {
@@ -24167,19 +24173,9 @@ var __WEBPACK_AMD_DEFINE_RESULT__;(function(root, factory){
 
 __webpack_require__(0);
 
-__webpack_require__(4);
-
-__webpack_require__(5);
-
-__webpack_require__(6);
-
 __webpack_require__(7);
 
-var _voice = __webpack_require__(8);
-
-var _voice2 = _interopRequireDefault(_voice);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+__webpack_require__(9);
 
 /***/ }),
 /* 3 */
@@ -24188,7 +24184,13 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 "use strict";
 
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 var nameToNumerals = function nameToNumerals(string) {
+  if (string.length === 0) {
+    return null;
+  }
   string = string.toLowerCase();
   var base35 = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
   var stringVals = string.split('').reduce(function (acc, ch) {
@@ -24283,65 +24285,16 @@ var beatsToMelody = function beatsToMelody(beats) {
   return mapped;
 };
 
-var nameBdayToSong = function nameBdayToSong(name, bday, mode) {
+var nameBdayToSong = exports.nameBdayToSong = function nameBdayToSong(name, bday, mode) {
   var pitches = nameToMelody(name, mode);
   var beats = birthdayToBeats(bday);
   return beatsToMelody(fillBeats(pitches, beats));
 };
 
 /***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-// import Tone from 'tone';
-//
-// const synth = new Tone.Synth();
-// synth.toMaster()
-//
-// const testCallback = () => (synth.triggerAttackRelease("C2", "8n"));
-//
-// const transportSetting = {
-//   bpm: 120,
-//   swing: 0,
-//   swingSubdivision: "8n",
-//   timeSignature: [3,4],
-//   loopStart: 0,
-//   loopEnd: "4m",
-//   PPQ: 192
-// };
-//
-// Tone.Transport.scheduleRepeat(testCallback, "4n", 0, "1m");
-// Tone.Transport.start();
-
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-// import Tone from 'tone';
-//
-// const synth = new Tone.AMSynth().toMaster();
-//
-// const part = new Tone.Part(function(time, value){
-// 	synth.triggerAttackRelease(value.note, "8n", time, value.velocity);
-//     }, [{"time" : 0, "note" : "C3", "velocity": 0.9},
-//     {"time" : "0:2", "note" : "C4", "velocity": 0.5}
-// ]);
-//
-// part.start(0);
-// Tone.Transport.start();
-
-
-/***/ }),
+/* 4 */,
+/* 5 */,
+/* 6 */,
 /* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -24410,7 +24363,42 @@ document.addEventListener('keyup', function (e) {
 });
 
 /***/ }),
-/* 8 */
+/* 8 */,
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _tone = __webpack_require__(1);
+
+var _tone2 = _interopRequireDefault(_tone);
+
+var _user = __webpack_require__(10);
+
+var _user2 = _interopRequireDefault(_user);
+
+var _gui = __webpack_require__(0);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var user = new _user2.default();
+
+var userForm = document.getElementById('user-info');
+
+userForm.addEventListener('submit', function (e) {
+  e.preventDefault();
+  user.setName(e.currentTarget.name.value);
+  user.setBday(e.currentTarget.birthday.value);
+  user.updateSong();
+  console.log(user.song);
+  _gui.playState.sequence.cancel();
+  _gui.playState.music = user.song;
+  (0, _gui.newSequence)(_gui.playState.music);
+});
+
+/***/ }),
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24422,56 +24410,55 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _tone = __webpack_require__(1);
-
-var _tone2 = _interopRequireDefault(_tone);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _transcribers = __webpack_require__(3);
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var Voice = function () {
-  function Voice(part, range, instrument) {
-    _classCallCheck(this, Voice);
+var User = function () {
+  function User() {
+    _classCallCheck(this, User);
 
-    this.state = { playing: false };
-    this.range = range;
-    this.instrument = new instrument();
-    this.instrument.toMaster();
-    this.connectVoice(this.range);
-    this.setPart(part);
+    this.name = '';
+    this.birthday = '';
+    this.mode = 'major';
+    this.permittedAlpha = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
+    this.permittedNums = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+    this.song = [];
   }
 
-  _createClass(Voice, [{
-    key: 'connectVoice',
-    value: function connectVoice(range) {
-      $('#' + range + '-volume').on('input', this.adjustVolume.bind(this));
+  _createClass(User, [{
+    key: 'setName',
+    value: function setName(input) {
+      var _this = this;
+
+      var cleanString = input.toLowerCase();
+      cleanString = cleanString.split('').filter(function (ch) {
+        return _this.permittedAlpha.includes(ch);
+      });
+      this.name = cleanString.join('');
     }
   }, {
-    key: 'adjustVolume',
-    value: function adjustVolume(e) {
-      this.instrument.volume.value = parseFloat(e.target.value);
-      console.log(this.volume);
+    key: 'setBday',
+    value: function setBday(input) {
+      var _this2 = this;
+
+      var cleanString = input.toLowerCase();
+      cleanString = cleanString.split('').filter(function (ch) {
+        return _this2.permittedNums.includes(ch);
+      });
+      this.birthday = cleanString.join('');
     }
   }, {
-    key: 'setPart',
-    value: function setPart(part) {
-      var pattern = new _tone2.default.Pattern(function (time, note) {
-        this.instrument.triggerAttackRelease(note, 0.25);
-      }.bind(this), part);
-      pattern.start(0);
-    }
-  }, {
-    key: 'instrument',
-    value: function instrument() {
-      this.instrument;
+    key: 'updateSong',
+    value: function updateSong() {
+      this.song = this.name.length === 0 ? [] : (0, _transcribers.nameBdayToSong)(this.name, this.birthday, 'major');
     }
   }]);
 
-  return Voice;
+  return User;
 }();
 
-exports.default = Voice;
+exports.default = User;
 
 /***/ })
 /******/ ]);

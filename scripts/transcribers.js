@@ -1,4 +1,7 @@
 const nameToNumerals = (string) => {
+  if (string.length === 0 ) {
+    return null;
+  }
   string = string.toLowerCase();
   const base35 = ["1", "2", "3", "4", "5", "6", "7", "8", "9",
     "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l",
@@ -90,7 +93,7 @@ const beatsToMelody = (beats) => {
   return mapped;
 };
 
-const nameBdayToSong = (name, bday, mode) => {
+export const nameBdayToSong = (name, bday, mode) => {
   const pitches = nameToMelody(name, mode);
   const beats = birthdayToBeats(bday);
   return beatsToMelody(fillBeats(pitches, beats));

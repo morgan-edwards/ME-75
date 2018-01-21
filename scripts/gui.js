@@ -5,14 +5,13 @@ import * as Transcribe from './transcribers';
 Nexus.context = Tone.context;
 
 //State
-const patterns = {};
 const waveTypes = {
    0: 'sine',
    1: 'square',
    2: 'triangle',
    3: 'sawtooth'
  };
-const playState = { playing: false, wave: 'sine', };
+export const playState = { playing: false, wave: 'sine', music: ["c4", "f5"], sequence: null };
 const bpmLevels = { bpm: 170, min: 20, max: 320 };
 const synthSettings ={ attack: 0.25, release: 0.25 };
 const volumeLevels = { volume: -10, high: 10, low: -30, };
@@ -65,20 +64,20 @@ synth.chain(
   Tone.Master
 );
 
-// TEST AUDIO
-var pattern = new Tone.Sequence(function(time, note){
-	synth.triggerAttackRelease(note, "8n");
-}, [ 'D4',
-  [ null, 'A4', 'G4' ],
-  'A#4',
-  [ null, 'F4', 'F4' ],
-  'G4',
-  [ null, 'C4' ],
-  [ null, 'E4' ],
-  'D4' ], "4n").start(0);
+//AUDIO Initialize
+export const newSequence = (pattern) => {
+  console.log(`MAKING SEQUENCE: ${pattern}`);
+  const sequence = new Tone.Sequence(function(time, note){
+    synth.triggerAttackRelease(note, "8n");
+  }, pattern, "4n");
+  sequence.humanize = "32n";
+  sequence.loop = true;
+  sequence.start(0);
+  return sequence;
+};
 
-pattern.loop = true;
-pattern.start(0);
+let initSequence = newSequence(playState.music);
+playState.sequence = initSequence
 
 
 //Transport callbacks
