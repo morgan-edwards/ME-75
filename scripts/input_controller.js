@@ -34,7 +34,7 @@ const updateMelody = (e) => {
   user.setName(e.currentTarget.name.value);
   user.setBday(e.currentTarget.birthday.value);
   user.updateSong();
-  if (user.name === 'morgan' && user.birthday === '19851014') {
+  if (user.name === 'morganedwards' && user.birthday === '19851014') {
     rickRoll();
     setMarquee("RICK ROLLED!");
   } else {
