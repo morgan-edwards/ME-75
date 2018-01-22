@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 3);
+/******/ 	return __webpack_require__(__webpack_require__.s = 5);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -24176,7 +24176,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.nameBdayToSong = undefined;
 
-var _keyboard = __webpack_require__(4);
+var _keyboard = __webpack_require__(3);
 
 var nameToNumerals = function nameToNumerals(string) {
   if (string.length === 0) {
@@ -24289,19 +24289,6 @@ var nameBdayToSong = exports.nameBdayToSong = function nameBdayToSong(name, bday
 "use strict";
 
 
-__webpack_require__(0);
-
-__webpack_require__(4);
-
-__webpack_require__(5);
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -24309,7 +24296,7 @@ exports.keyboardState = undefined;
 
 var _gui = __webpack_require__(0);
 
-var _input_controller = __webpack_require__(5);
+var _input_controller = __webpack_require__(4);
 
 var keyboardState = exports.keyboardState = { key: null, octave: 4, active: false };
 var playKey = function playKey(pitch, octave, e) {
@@ -24419,7 +24406,7 @@ document.addEventListener('keyup', function (e) {
 });
 
 /***/ }),
-/* 5 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24475,6 +24462,19 @@ var updateMelody = function updateMelody(e) {
 };
 
 userForm.addEventListener('submit', updateMelody);
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+__webpack_require__(0);
+
+__webpack_require__(3);
+
+__webpack_require__(4);
 
 /***/ }),
 /* 6 */
