@@ -73,7 +73,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.play = exports.newSequence = exports.synth = exports.playState = undefined;
+exports.play = exports.rickRoll = exports.newSequence = exports.synth = exports.playState = undefined;
 
 var _tone = __webpack_require__(1);
 
@@ -97,7 +97,7 @@ var waveTypes = {
   2: 'triangle',
   3: 'sawtooth'
 };
-var playState = exports.playState = { playing: false, wave: 'sine', sequence: null };
+var playState = exports.playState = { playing: false, wave: 'sine', sequence: null, roll: null };
 var bpmLevels = { bpm: 170, min: 20, max: 320 };
 var synthSettings = { attack: 0.25, release: 0.25 };
 var volumeLevels = { volume: -5, high: 20, low: -30 };
@@ -142,7 +142,6 @@ synth.chain(compressor, chorus, delay, distortion, reverb, lowpassFilter, highpa
 
 //AUDIO Initialize
 var newSequence = exports.newSequence = function newSequence(pattern) {
-  console.log('MAKING SEQUENCE: ' + pattern);
   var sequence = new _tone2.default.Sequence(function (time, note) {
     synth.triggerAttackRelease(note, "8n");
   }, pattern, "4n");
@@ -151,6 +150,13 @@ var newSequence = exports.newSequence = function newSequence(pattern) {
   sequence.start(0);
   playState.sequence = sequence;
   return sequence;
+};
+
+var roll = new _tone2.default.Player('./assets/roll.mp3').toMaster();
+var rickRoll = exports.rickRoll = function rickRoll() {
+  console.log('rick rolling...');
+  roll.start();
+  playState.roll = roll;
 };
 
 newSequence([]);
@@ -24433,6 +24439,7 @@ var user = new _user2.default();
 var userForm = document.getElementById('user-info');
 var marquee = document.getElementById('now-playing');
 var setMarquee = function setMarquee(name) {
+
   if (name === '') {
     marquee.innerHTML = 'Enter your information and press play to hear your melody';
   } else {
@@ -24452,12 +24459,21 @@ var updateOctave = exports.updateOctave = function updateOctave() {
 
 var updateMelody = function updateMelody(e) {
   e.preventDefault();
+  if (_gui.playState.roll) {
+    _gui.playState.roll.stop();
+    _gui.playState.roll = null;
+  }
   _gui.playState.sequence.cancel();
   user.setName(e.currentTarget.name.value);
   user.setBday(e.currentTarget.birthday.value);
   user.updateSong();
-  (0, _gui.newSequence)(user.song);
-  setMarquee(e.currentTarget.name.value);
+  if (user.name === 'morgan' && user.birthday === '19851014') {
+    (0, _gui.rickRoll)();
+    setMarquee("RICK ROLLED!");
+  } else {
+    (0, _gui.newSequence)(user.song);
+    setMarquee(e.currentTarget.name.value);
+  }
   togglePlay();
 };
 

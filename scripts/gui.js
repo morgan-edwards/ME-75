@@ -11,7 +11,7 @@ const waveTypes = {
    2: 'triangle',
    3: 'sawtooth'
  };
-export const playState = { playing: false, wave: 'sine', sequence: null };
+export const playState = { playing: false, wave: 'sine', sequence: null, roll: null };
 const bpmLevels = { bpm: 170, min: 20, max: 320 };
 const synthSettings ={ attack: 0.25, release: 0.25 };
 const volumeLevels = { volume: -5, high: 20, low: -30, };
@@ -66,7 +66,6 @@ synth.chain(
 
 //AUDIO Initialize
 export const newSequence = (pattern) => {
-  console.log(`MAKING SEQUENCE: ${pattern}`);
   const sequence = new Tone.Sequence(function(time, note){
     synth.triggerAttackRelease(note, "8n");
   }, pattern, "4n");
@@ -75,6 +74,13 @@ export const newSequence = (pattern) => {
   sequence.start(0);
   playState.sequence = sequence;
   return sequence;
+};
+
+const roll = new Tone.Player('./assets/roll.mp3').toMaster();
+export const rickRoll = () => {
+  console.log('rick rolling...');
+  roll.start();
+  playState.roll = roll;
 };
 
 newSequence([]);
