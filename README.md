@@ -1,5 +1,6 @@
 # Play My Name
 A JavaScript Sound Synthesizer that generates a unique melody for everybody.
+<img src="https://github.com/morgan-edwards/morganedwards.io/blob/master/images/playmyname.gif" width="400">
 
 ## Getting started
 1. Enter your name and date of birth, then click the 'Generate Melody' button.'
