@@ -45,3 +45,9 @@ const updateMelody = (e) => {
 };
 
 userForm.addEventListener('submit', updateMelody);
+
+const keyMappings = $('.key-mappings');
+$('#key-map').hover(
+  () => keyMappings.addClass('visible'),
+  () => keyMappings.removeClass('visible')
+);

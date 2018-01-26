@@ -14,10 +14,46 @@
 
     <header>
       <h1>Play My Name</h1>
-      <p class="instructions">Enter your name and birthday below to generate a
-      melody that is unique to you. Morph your melody with all of the controls, and
-      change the octave with + or - on your keyboard. You can also play the instrument
-      using your keyboard when your mouse is inside of it. Have fun!</p>
+      <p class="instructions">Enter your name and birthday, then press "Generate Melody" below to
+        hear your unique melody. Use the control panel below to morph your melody.</p>
+      <p id="keyPara" class="instructions">Use the + and - keys to change the octave, and play the instrument directly
+        using your <span id="key-map">keyboard</span> while your mouse is inside the control panel.</p>
+      <div class="key-mappings">
+        <table>
+          <tr>
+            <th class="row-title">PITCH</th>
+            <td class="row-title">C</td>
+            <td class="row-title">C#</td>
+            <td class="row-title">D</td>
+            <td class="row-title">D#</td>
+            <td class="row-title">E</td>
+            <td class="row-title">F</td>
+            <td class="row-title">F#</td>
+            <td class="row-title">G</td>
+            <td class="row-title">G#</td>
+            <td class="row-title">A</td>
+            <td class="row-title">A#</td>
+            <td class="row-title">B</td>
+            <td class="row-title">C</td>
+          </tr>
+        <tr>
+          <th class="row-title">KEY</th>
+          <td class="row-title">S</td>
+          <td class="row-title">E</td>
+          <td class="row-title">D</td>
+          <td class="row-title">R</td>
+          <td class="row-title">F</td>
+          <td class="row-title">G</td>
+          <td class="row-title">Y</td>
+          <td class="row-title">H</td>
+          <td class="row-title">U</td>
+          <td class="row-title">J</td>
+          <td class="row-title">I</td>
+          <td class="row-title">K</td>
+          <td class="row-title">L</td>
+        </tr>
+        </table>
+      </div>
     </header>
 
     <main>
@@ -37,7 +73,7 @@
 
         <div class="synth-header">
           <div class="rack-element header-knob">
-            <h2>PLAY</h2>
+            <h2 id="play-pause">PLAY</h2>
             <div class="transport-control" id="play-btn"></div>
           </div>
 

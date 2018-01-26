@@ -91,6 +91,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 Nexus.context = _tone2.default.context;
 
 //State
+var playBtn = $('#play-pause');
 var waveTypes = {
   0: 'sine',
   1: 'square',
@@ -100,7 +101,7 @@ var waveTypes = {
 var playState = exports.playState = { playing: false, wave: 'sine', sequence: null, roll: null };
 var bpmLevels = { bpm: 170, min: 20, max: 320 };
 var synthSettings = { attack: 0.25, release: 0.25 };
-var volumeLevels = { volume: -5, high: 20, low: -30 };
+var volumeLevels = { volume: 10, high: 30, low: -30 };
 var compressorLevels = { threshold: -24, ratio: 12 };
 var eqLevels = {
   lowLevelEq: volumeLevels.volume,
@@ -212,6 +213,11 @@ var play = exports.play = new Nexus.Button('#play-btn', {
 colorize(play);
 play.on('change', function (v) {
   updateState(playState, 'playing', v);
+  if (playState.playing) {
+    playBtn.html('PAUSE');
+  } else {
+    playBtn.html('PLAY');
+  }
   updateTransport();
 });
 
@@ -24478,6 +24484,13 @@ var updateMelody = function updateMelody(e) {
 };
 
 userForm.addEventListener('submit', updateMelody);
+
+var keyMappings = $('.key-mappings');
+$('#key-map').hover(function () {
+  return keyMappings.addClass('visible');
+}, function () {
+  return keyMappings.removeClass('visible');
+});
 
 /***/ }),
 /* 5 */

@@ -5,6 +5,7 @@ import * as Transcribe from './transcribers';
 Nexus.context = Tone.context;
 
 //State
+const playBtn = $('#play-pause');
 const waveTypes = {
    0: 'sine',
    1: 'square',
@@ -14,7 +15,7 @@ const waveTypes = {
 export const playState = { playing: false, wave: 'sine', sequence: null, roll: null };
 const bpmLevels = { bpm: 170, min: 20, max: 320 };
 const synthSettings ={ attack: 0.25, release: 0.25 };
-const volumeLevels = { volume: -5, high: 20, low: -30, };
+const volumeLevels = { volume: 10, high: 30, low: -30, };
 const compressorLevels = { threshold: -24, ratio: 12, };
 const eqLevels = {
   lowLevelEq: volumeLevels.volume,
@@ -138,6 +139,11 @@ export const play = new Nexus.Button('#play-btn', {
 colorize(play);
 play.on('change', (v) => {
   updateState(playState, 'playing', v);
+  if (playState.playing) {
+    playBtn.html('PAUSE');
+  } else {
+    playBtn.html('PLAY');
+  }
   updateTransport();
 });
 

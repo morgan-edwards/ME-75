@@ -12,6 +12,7 @@ body {
 }
 
 header {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -19,11 +20,45 @@ header {
 }
 
 .instructions {
-  width: 477px;
+  width: 570px;
   text-align: center;
-  margin-bottom: 25px;
+  margin-bottom: 20px;
   color: #979999;
 }
+
+#key-map {
+  cursor: pointer;
+  border-bottom: 1px #ff0084 dotted;
+}
+
+.key-mappings {
+  position: absolute;
+  display: none;
+  border: 1px solid black;
+  padding: 20px;
+  border-radius: 10px;
+  background-color: white;
+  top: 120px;
+  box-shadow: 0px 0px 8px #ff0084;
+}
+
+.visible {
+  display: block;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+td {
+  width: 25px;
+  text-align: center;
+}
+
+table, th, td {
+    border: 1px solid black;
+}
+td:nth-child(even) {background-color: #f2f2f2;}
 
 h1 {
   font-size: 85px;
